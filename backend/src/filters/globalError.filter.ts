@@ -1,6 +1,6 @@
 import { ArgumentsHost, ExceptionFilter, Injectable, Logger } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
-import { ErrorResponseDto } from './error-response.dto';
+import { ErrorResponseDto } from './ErrorResponse.dto';
 
 @Injectable()
 export class GlobalErrorFilter implements ExceptionFilter {
