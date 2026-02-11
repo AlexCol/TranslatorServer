@@ -1,5 +1,6 @@
 import { BadRequestException, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
+import { System } from './entities/system.entity';
 import { ensureConnected, waitForConnection } from './utils';
 import { SystemProvider } from '@/core/interfaces/SystemProvider';
 
@@ -15,7 +16,7 @@ export class DatabaseSystemProvider implements SystemProvider {
   async listSystems(): Promise<string[]> {
     try {
       await waitForConnection(this.knex);
-      const rows = await this.knex('systems').select('name').orderBy('name');
+      const rows = await this.knex.select('*').from<System>('systems').orderBy('name', 'asc');
       return rows.map((row) => row.name);
     } catch (error) {
       this.logger.error(`Error listing systems: ${error}`);
