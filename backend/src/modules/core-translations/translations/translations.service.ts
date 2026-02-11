@@ -10,7 +10,7 @@ export class TranslationsService {
   constructor(private readonly provider: TranslationProvider) {}
 
   async loadWithFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
-    const cacheKey = `${entry.sistema}:${entry.environment}:${entry.language}:${entry.namespace}`;
+    const cacheKey = `${entry.system}:${entry.environment}:${entry.language}:${entry.namespace}`;
 
     let json = translationsCache.get(cacheKey);
     if (json) {
@@ -26,7 +26,7 @@ export class TranslationsService {
   }
 
   async loadWithoutFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
-    const cacheKey = `${entry.sistema}:${entry.environment}:${entry.language}:${entry.namespace}:clean`;
+    const cacheKey = `${entry.system}:${entry.environment}:${entry.language}:${entry.namespace}:clean`;
 
     let json = translationsCache.get(cacheKey);
     if (json) {
@@ -43,7 +43,7 @@ export class TranslationsService {
 
   async createKey(system: string, namespace: string, key: string, value: string): Promise<void> {
     const newKeyCatalog = {
-      sistema: system,
+      system: system,
       environment: 'dev',
       language: '',
       namespace: namespace,
@@ -55,7 +55,7 @@ export class TranslationsService {
 
   async createTranslation(system: string, language: string, namespace: string, key: string, value: string) {
     const entry = {
-      sistema: system,
+      system: system,
       environment: 'dev',
       language: language,
       namespace: namespace,
@@ -67,7 +67,7 @@ export class TranslationsService {
 
   async updateKey(system: string, language: string, namespace: string, key: string, value: string): Promise<void> {
     const entry = {
-      sistema: system,
+      system: system,
       environment: 'dev',
       language: language,
       namespace: namespace,
@@ -79,7 +79,7 @@ export class TranslationsService {
 
   async deleteKey(system: string, namespace: string, key: string): Promise<void> {
     const entry = {
-      sistema: system,
+      system: system,
       environment: 'dev',
       language: '',
       namespace: namespace,

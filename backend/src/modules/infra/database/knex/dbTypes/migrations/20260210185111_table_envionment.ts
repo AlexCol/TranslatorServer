@@ -10,7 +10,7 @@ export async function up(knex: Knex): Promise<void> {
 
     table.foreign('system_id').references('id').inTable('systems').onDelete('CASCADE');
 
-    table.unique(['system_id', 'name']); // Garante que não haja ambientes duplicados para o mesmo sistema
+    table.unique(['system_id', 'name']); // Garante que não haja ambientes duplicados para o mesmo system
 
     table.index(['system_id']);
     table.index(['name']);

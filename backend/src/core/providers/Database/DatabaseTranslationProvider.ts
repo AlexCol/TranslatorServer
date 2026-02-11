@@ -20,7 +20,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   //!carrega o json da tradução
   async loadWithFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     try {
-      const sysId = await getSystemId(this.knex, entry.sistema);
+      const sysId = await getSystemId(this.knex, entry.system);
       const envId = await getEnvironmentId(this.knex, sysId, entry.environment);
       const langs = await getLanguages(this.knex, envId);
 
@@ -58,7 +58,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   async loadWithoutFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     try {
       //? dados para busca
-      const sysId = await getSystemId(this.knex, entry.sistema);
+      const sysId = await getSystemId(this.knex, entry.system);
       const envId = await getEnvironmentId(this.knex, sysId, entry.environment);
       const langs = await getLanguages(this.knex, envId);
 
@@ -110,7 +110,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         });
       }
 
-      this.logger.log(`Key "${key}" created in "${entry.sistema}/${entry.environment}/${entry.language}".`);
+      this.logger.log(`Key "${key}" created in "${entry.system}/${entry.environment}/${entry.language}".`);
     } catch (error) {
       this.logger.error(`Error creating key: ${error.message}`);
       throw new BadRequestException(`Failed to create key: ${error.message}`);
@@ -141,7 +141,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         });
       }
 
-      const msg = `Translation for key "${key}" created in "${entry.sistema}/${entry.environment}/${entry.language}".`;
+      const msg = `Translation for key "${key}" created in "${entry.system}/${entry.environment}/${entry.language}".`;
       this.logger.log(msg);
     } catch (error) {
       this.logger.error(`Error creating translation: ${error.message}`);
@@ -164,7 +164,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         .where({ id: json.id })
         .update({ json: JSON.stringify(jsonObj) });
 
-      this.logger.log(`Key "${key}" updated in "${entry.sistema}/${entry.environment}/${entry.language}".`);
+      this.logger.log(`Key "${key}" updated in "${entry.system}/${entry.environment}/${entry.language}".`);
     } catch (error) {
       this.logger.error(`Error updating key: ${error.message}`);
       throw new BadRequestException(`Failed to update key: ${error.message}`);
@@ -173,23 +173,24 @@ export class DatabaseTranslationProvider implements TranslationProvider {
 
   async deleteKey(entry: CatalogEntry, key: string): Promise<void> {
     try {
-      const sysId = await getSystemId(this.knex, entry.sistema);
-      const envId = await getEnvironmentId(this.knex, sysId, entry.environment);
-      const langs = await getLanguages(this.knex, envId);
-
-      for (const lang of langs) {
-        const translation = await this.getTranslation({ ...entry, language: lang.code });
-        const jsonObj = JSON.parse(translation.json || '{}');
-        if (jsonObj[key]) {
-          delete jsonObj[key];
-          await this.knex('translations')
-            .where({ id: translation.id })
-            .update({ json: JSON.stringify(jsonObj) });
-          this.logger.log(`Key "${key}" deleted from "${entry.sistema}/${entry.environment}/${lang.code}".`);
+      await this.knex.transaction(async (trx) => {
+        const sysId = await getSystemId(trx, entry.system);
+        const envId = await getEnvironmentId(trx, sysId, entry.environment);
+        const langs = await getLanguages(trx, envId);
+        for (const lang of langs) {
+          const translation = await this.getTranslation({ ...entry, language: lang.code }, trx);
+          const jsonObj = JSON.parse(translation.json || '{}');
+          if (jsonObj[key]) {
+            delete jsonObj[key];
+            await trx('translations')
+              .where({ id: translation.id })
+              .update({ json: JSON.stringify(jsonObj) });
+            this.logger.log(`Key "${key}" deleted from "${entry.system}/${entry.environment}/${lang.code}".`);
+          }
         }
-      }
+      });
 
-      this.logger.log(`Key "${key}" deleted from all languages in "${entry.sistema}/${entry.environment}".`);
+      this.logger.log(`Key "${key}" deleted from all languages in "${entry.system}/${entry.environment}".`);
     } catch (error) {
       this.logger.error(`Error deleting key: ${error.message}`);
       throw new BadRequestException(`Failed to delete key: ${error.message}`);
@@ -223,23 +224,25 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   /******************************************************/
   /* Metodos privados                                   */
   /******************************************************/
-  private async getTranslation(entry: CatalogEntry): Promise<Translation> {
-    const sysId = await getSystemId(this.knex, entry.sistema);
-    const envId = await getEnvironmentId(this.knex, sysId, entry.environment);
+  private async getTranslation(entry: CatalogEntry, trx?: Knex.Transaction): Promise<Translation> {
+    const db = trx || this.knex;
 
-    const langs = await getLanguages(this.knex, envId);
+    const sysId = await getSystemId(db, entry.system);
+    const envId = await getEnvironmentId(db, sysId, entry.environment);
+
+    const langs = await getLanguages(db, envId);
     const lang = entry.language
       ? langs.filter((l) => l.code === entry.language)[0]
       : langs.filter((l) => l.isBase === 1)[0];
 
     if (!lang) {
       throw new BadRequestException(
-        `Language "${entry.language}" not found for system "${entry.sistema}" and environment "${entry.environment}".`,
+        `Language "${entry.language}" not found for system "${entry.system}" and environment "${entry.environment}".`,
       );
     }
 
-    const namespaceId = await getNamespaceId(this.knex, lang.id, entry.namespace);
-    const row = await this.knex.select('*').from<Translation>('translations').where({ namespaceId }).first();
+    const namespaceId = await getNamespaceId(db, lang.id, entry.namespace);
+    const row = await db.select('*').from<Translation>('translations').where({ namespaceId }).first();
 
     if (!row) {
       const emptyTranslation: Translation = {

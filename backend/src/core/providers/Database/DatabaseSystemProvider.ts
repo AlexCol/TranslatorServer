@@ -24,34 +24,34 @@ export class DatabaseSystemProvider implements SystemProvider {
     }
   }
 
-  async createSystem(sistema: string): Promise<void> {
+  async createSystem(system: string): Promise<void> {
     try {
       await waitForConnection(this.knex);
-      const exists = await this.knex('systems').where({ name: sistema }).first();
+      const exists = await this.knex('systems').where({ name: system }).first();
       if (exists) {
-        throw new BadRequestException(`System '${sistema}' already exists`);
+        throw new BadRequestException(`System '${system}' already exists`);
       }
 
-      const newSystem = await this.knex('systems').insert({ name: sistema });
+      const newSystem = await this.knex('systems').insert({ name: system });
       await this.insertBaseEnvironments(newSystem[0]);
 
-      this.logger.debug(`System '${sistema}' created successfully`);
+      this.logger.debug(`System '${system}' created successfully`);
     } catch (error) {
       this.logger.error(`Error creating system: ${error}`);
       throw new BadRequestException(`Error creating system: ${error.message}`);
     }
   }
 
-  async deleteSystem(sistema: string): Promise<void> {
+  async deleteSystem(system: string): Promise<void> {
     try {
       await waitForConnection(this.knex);
-      const exists = await this.knex('systems').where({ name: sistema }).first();
+      const exists = await this.knex('systems').where({ name: system }).first();
       if (!exists) {
-        throw new BadRequestException(`System '${sistema}' does not exist`);
+        throw new BadRequestException(`System '${system}' does not exist`);
       }
 
-      await this.knex('systems').where({ name: sistema }).del();
-      this.logger.debug(`System '${sistema}' deleted successfully`);
+      await this.knex('systems').where({ name: system }).del();
+      this.logger.debug(`System '${system}' deleted successfully`);
     } catch (error) {
       this.logger.error(`Error deleting system: ${error}`);
       throw new BadRequestException(`Error deleting system: ${error.message}`);

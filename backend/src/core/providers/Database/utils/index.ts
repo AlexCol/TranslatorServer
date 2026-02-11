@@ -1,4 +1,8 @@
 export * from './ensureConnected';
-export * from './waitForConnection';
-
+export * from './getEnvironmentId';
+export * from './getLanguage';
+export * from './getLanguages';
+export * from './getNamespaceId';
 export * from './getSystemId';
+export * from './getTranslations';
+export * from './waitForConnection';

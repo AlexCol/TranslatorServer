@@ -1,4 +1,5 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { EnvironmentDto } from './dto/environment.dto';
 import { EnvironmentService } from './environment.service';
 
 @Controller('environment')
@@ -10,13 +11,13 @@ export class EnvironmentController {
     return await this.environmentService.listEnvironments(system);
   }
 
-  @Post(':system/:environment')
-  async createEnvironment(@Param('system') system: string, @Param('environment') environment: string) {
-    return await this.environmentService.createEnvironment(system, environment);
+  @Post()
+  async createEnvironment(@Body() dto: EnvironmentDto) {
+    return await this.environmentService.createEnvironment(dto.system, dto.environment);
   }
 
-  @Delete(':system/:environment')
-  async deleteEnvironment(@Param('system') system: string, @Param('environment') environment: string) {
-    return await this.environmentService.deleteEnvironment(system, environment);
+  @Delete()
+  async deleteEnvironment(@Body() dto: EnvironmentDto) {
+    return await this.environmentService.deleteEnvironment(dto.system, dto.environment);
   }
 }

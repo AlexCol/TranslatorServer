@@ -1,6 +1,7 @@
-export type CatalogEntry = {
+export type PublishProps = {
   system: string;
-  environment: string;
   language: string;
   namespace: string;
+  from: string;
+  to: string;
 };

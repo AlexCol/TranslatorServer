@@ -1,4 +1,5 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { NamespaceDto } from './dto/namespace.dto';
 import { NamespaceService } from './namespace.service';
 
 @Controller('namespaces')
@@ -14,13 +15,15 @@ export class NamespaceController {
     return this.namespaceService.listNamespaces(system, environment, language);
   }
 
-  @Post(':system/:namespace')
-  async createNamespace(@Param('system') system: string, @Param('namespace') namespace: string) {
+  @Post()
+  async createNamespace(@Body() body: NamespaceDto) {
+    const { system, namespace } = body;
     await this.namespaceService.createNamespace(system, namespace);
   }
 
-  @Delete(':system/:namespace')
-  async deleteNamespace(@Param('system') system: string, @Param('namespace') namespace: string) {
+  @Delete()
+  async deleteNamespace(@Body() body: NamespaceDto) {
+    const { system, namespace } = body;
     await this.namespaceService.deleteNamespace(system, namespace);
   }
 }

@@ -13,26 +13,26 @@ export class DatabaseLanguageProvider implements LanguageProvider {
     void ensureConnected(this.knex);
   }
 
-  async listLanguages(sistema: string, env: string): Promise<string[]> {
+  async listLanguages(system: string, env: string): Promise<string[]> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, env);
       const rows = await this.knex('languages').where({ environment_id: envId }).select('code');
       return rows.map((row) => row.code);
     } catch (error) {
-      this.logger.error(`Error listing languages for system ${sistema} and env ${env}:`, error);
-      throw new BadRequestException(`Error listing languages for system ${sistema} and env ${env}: ${error.message}`);
+      this.logger.error(`Error listing languages for system ${system} and env ${env}:`, error);
+      throw new BadRequestException(`Error listing languages for system ${system} and env ${env}: ${error.message}`);
     }
   }
 
-  async createLanguage(sistema: string, language: string): Promise<void> {
+  async createLanguage(system: string, language: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, 'dev');
       const exists = await this.knex('languages').where({ environment_id: envId, code: language }).first();
 
       if (exists) {
-        throw new Error(`Language '${language}' already exists for system '${sistema}' in 'dev' environment`);
+        throw new Error(`Language '${language}' already exists for system '${system}' in 'dev' environment`);
       }
 
       await this.knex('languages').insert({
@@ -41,89 +41,89 @@ export class DatabaseLanguageProvider implements LanguageProvider {
         is_base: false,
       });
 
-      await this.replacateBaseLanguageNamespaces(sistema, 'dev', language);
+      await this.replacateBaseLanguageNamespaces(system, 'dev', language);
 
-      this.logger.debug(`Language '${language}' created successfully for system '${sistema}' in 'dev' environment`);
+      this.logger.debug(`Language '${language}' created successfully for system '${system}' in 'dev' environment`);
     } catch (error) {
-      this.logger.error(`Error creating language '${language}' for system '${sistema}':`, error);
+      this.logger.error(`Error creating language '${language}' for system '${system}':`, error);
       throw error;
     }
   }
 
-  async deleteLanguage(sistema: string, language: string): Promise<void> {
+  async deleteLanguage(system: string, language: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, 'dev');
       const exists = await this.knex('languages').where({ environment_id: envId, code: language }).first();
       if (!exists) {
         throw new BadRequestException(
-          `Language '${language}' does not exist for system '${sistema}' in 'dev' environment`,
+          `Language '${language}' does not exist for system '${system}' in 'dev' environment`,
         );
       }
 
       const isBase = exists.isBase === 1;
       if (isBase) {
         throw new BadRequestException(
-          `Cannot delete base language '${language}' for system '${sistema}' in 'dev' environment. Please promote another language to base before deleting.`,
+          `Cannot delete base language '${language}' for system '${system}' in 'dev' environment. Please promote another language to base before deleting.`,
         );
       }
 
       await this.knex('languages').where({ environment_id: envId, code: language }).del();
-      this.logger.debug(`Language '${language}' deleted successfully for system '${sistema}' in 'dev' environment`);
+      this.logger.debug(`Language '${language}' deleted successfully for system '${system}' in 'dev' environment`);
     } catch (error) {
-      this.logger.error(`Error deleting language '${language}' for system '${sistema}':`, error);
-      throw new BadRequestException(`Error deleting language '${language}' for system '${sistema}': ${error.message}`);
+      this.logger.error(`Error deleting language '${language}' for system '${system}':`, error);
+      throw new BadRequestException(`Error deleting language '${language}' for system '${system}': ${error.message}`);
     }
   }
 
-  async getBaseLanguage(sistema: string, env: string): Promise<string | null> {
+  async getBaseLanguage(system: string, env: string): Promise<string | null> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, env);
       const row = await this.knex('languages').where({ environment_id: envId, is_base: true }).first();
       return row ? row.code : null;
     } catch (error) {
-      this.logger.error(`Error getting base language for system '${sistema}' and env '${env}':`, error);
+      this.logger.error(`Error getting base language for system '${system}' and env '${env}':`, error);
       throw new BadRequestException(
-        `Error getting base language for system '${sistema}' and env '${env}': ${error.message}`,
+        `Error getting base language for system '${system}' and env '${env}': ${error.message}`,
       );
     }
   }
 
-  async demoteBaseLanguage(sistema: string, language: string): Promise<void> {
+  async demoteBaseLanguage(system: string, language: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, 'dev');
 
       //! verifica se o idioma existe e é base
       const row = await this.knex('languages').where({ environment_id: envId, code: language, is_base: true }).first();
       if (!row) {
         throw new BadRequestException(
-          `Language '${language}' is not the base language for system '${sistema}' in 'dev' environment or does not exist`,
+          `Language '${language}' is not the base language for system '${system}' in 'dev' environment or does not exist`,
         );
       }
 
       await this.knex('languages').where({ environment_id: envId, code: language }).update({ is_base: false });
 
-      this.logger.debug(`Language '${language}' demoted from base successfully for system '${sistema}'`);
+      this.logger.debug(`Language '${language}' demoted from base successfully for system '${system}'`);
     } catch (error) {
-      this.logger.error(`Error demoting base language '${language}' for system '${sistema}':`, error);
+      this.logger.error(`Error demoting base language '${language}' for system '${system}':`, error);
       throw new BadRequestException(
-        `Error demoting base language '${language}' for system '${sistema}': ${error.message}`,
+        `Error demoting base language '${language}' for system '${system}': ${error.message}`,
       );
     }
   }
 
-  async promoteToBaseLanguage(sistema: string, language: string): Promise<void> {
+  async promoteToBaseLanguage(system: string, language: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, 'dev');
 
       //! verifica se o idioma existe
       const row = await this.knex('languages').where({ environment_id: envId, code: language }).first();
       if (!row) {
         throw new BadRequestException(
-          `Language '${language}' does not exist for system '${sistema}' in 'dev' environment`,
+          `Language '${language}' does not exist for system '${system}' in 'dev' environment`,
         );
       }
 
@@ -133,11 +133,11 @@ export class DatabaseLanguageProvider implements LanguageProvider {
       //! promove o novo idioma base
       await this.knex('languages').where({ environment_id: envId, code: language }).update({ is_base: true });
 
-      this.logger.debug(`Language '${language}' promoted to base successfully for system '${sistema}'`);
+      this.logger.debug(`Language '${language}' promoted to base successfully for system '${system}'`);
     } catch (error) {
-      this.logger.error(`Error promoting language '${language}' to base for system '${sistema}':`, error);
+      this.logger.error(`Error promoting language '${language}' to base for system '${system}':`, error);
       throw new BadRequestException(
-        `Error promoting language '${language}' to base for system '${sistema}': ${error.message}`,
+        `Error promoting language '${language}' to base for system '${system}': ${error.message}`,
       );
     }
   }
@@ -145,13 +145,13 @@ export class DatabaseLanguageProvider implements LanguageProvider {
   /******************************************************/
   /* Metodos privados                                   */
   /******************************************************/
-  async replacateBaseLanguageNamespaces(sistema: string, env: string, language: string): Promise<void> {
+  async replacateBaseLanguageNamespaces(system: string, env: string, language: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, env);
       const baseLangRow = await this.knex('languages').where({ environment_id: envId, is_base: true }).first();
       if (!baseLangRow) {
-        const msg = `No base language found for system '${sistema}' and env '${env}'. Skipping namespace replication.`;
+        const msg = `No base language found for system '${system}' and env '${env}'. Skipping namespace replication.`;
         this.logger.warn(msg);
         return;
       }
@@ -159,7 +159,7 @@ export class DatabaseLanguageProvider implements LanguageProvider {
 
       const newLangRow = await this.knex('languages').where({ environment_id: envId, code: language }).first();
       if (!newLangRow) {
-        const msg = `New language '${language}' not found for system '${sistema}' and env '${env}'. Skipping namespace replication.`;
+        const msg = `New language '${language}' not found for system '${system}' and env '${env}'. Skipping namespace replication.`;
         this.logger.warn(msg);
         return;
       }
@@ -170,15 +170,15 @@ export class DatabaseLanguageProvider implements LanguageProvider {
         const exists = await this.knex('namespaces').where({ language_id: newLangId, name: ns.name }).first();
         if (!exists) {
           await this.knex('namespaces').insert({ language_id: newLangId, name: ns.name });
-          const msg = `Namespace '${ns.name}' replicated to language '${language}' for system '${sistema}' and env '${env}'.`;
+          const msg = `Namespace '${ns.name}' replicated to language '${language}' for system '${system}' and env '${env}'.`;
           this.logger.debug(msg);
         } else {
-          const msg = `Namespace '${ns.name}' already exists for language '${language}' in system '${sistema}' and env '${env}'. Skipping.`;
+          const msg = `Namespace '${ns.name}' already exists for language '${language}' in system '${system}' and env '${env}'. Skipping.`;
           this.logger.debug(msg);
         }
       }
     } catch (error) {
-      const msg = `Error replicating namespaces from base language to '${language}' for system '${sistema}' and env '${env}': ${error.message}`;
+      const msg = `Error replicating namespaces from base language to '${language}' for system '${system}' and env '${env}': ${error.message}`;
       this.logger.error(msg);
       throw new BadRequestException(msg);
     }

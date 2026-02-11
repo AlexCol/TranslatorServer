@@ -1,4 +1,5 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { LanguageDto } from './dto/language.dto';
 import { LanguageService } from './language.service';
 
 @Controller('languages')
@@ -15,23 +16,27 @@ export class LanguageController {
     return await this.languageService.getBaseLanguage(system, environment);
   }
 
-  @Post(':system/:language')
-  async createLanguage(@Param('system') system: string, @Param('language') language: string) {
-    return await this.languageService.createLanguage(system, language);
+  @Post()
+  async createLanguage(@Body() body: LanguageDto) {
+    const { system, code } = body;
+    return await this.languageService.createLanguage(system, code);
   }
 
-  @Post(':system/:language/promote')
-  async promoteToBaseLanguage(@Param('system') system: string, @Param('language') language: string) {
-    return await this.languageService.promoteToBaseLanguage(system, language);
+  @Post('promote')
+  async promoteToBaseLanguage(@Body() body: LanguageDto) {
+    const { system, code } = body;
+    return await this.languageService.promoteToBaseLanguage(system, code);
   }
 
-  @Post(':system/:language/demote')
-  async demoteBaseLanguage(@Param('system') system: string, @Param('language') language: string) {
-    return await this.languageService.demoteBaseLanguage(system, language);
+  @Post('demote')
+  async demoteBaseLanguage(@Body() body: LanguageDto) {
+    const { system, code } = body;
+    return await this.languageService.demoteBaseLanguage(system, code);
   }
 
-  @Delete(':system/:language')
-  async deleteLanguage(@Param('system') system: string, @Param('language') language: string) {
-    return await this.languageService.deleteLanguage(system, language);
+  @Delete()
+  async deleteLanguage(@Body() body: LanguageDto) {
+    const { system, code } = body;
+    return await this.languageService.deleteLanguage(system, code);
   }
 }

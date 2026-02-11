@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
-export class CreateKeyDto {
+
+export class NamespaceDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9-_]+$/, {
@@ -13,8 +14,4 @@ export class CreateKeyDto {
     message: 'namespace must contain only alphanumeric characters, hyphens, and underscores',
   })
   namespace: string;
-
-  @IsString()
-  @IsNotEmpty()
-  key: string;
 }

@@ -15,41 +15,41 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
     void ensureConnected(this.knex);
   }
 
-  async listNamespaces(sistema: string, env: string, language: string): Promise<string[]> {
+  async listNamespaces(system: string, env: string, language: string): Promise<string[]> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, env);
       const lang = await getLanguage(this.knex, envId, language);
       if (!lang) {
         throw new BadRequestException(
-          `Language '${language}' does not exist for system ${sistema} and environment ${env}`,
+          `Language '${language}' does not exist for system ${system} and environment ${env}`,
         );
       }
 
       const rows = await this.knex('namespaces').where({ language_id: lang.id }).select('name');
       return rows.map((row) => row.name);
     } catch (error) {
-      this.logger.error(`Error listing namespaces for system ${sistema}, env ${env}, and language ${language}:`, error);
+      this.logger.error(`Error listing namespaces for system ${system}, env ${env}, and language ${language}:`, error);
       throw new BadRequestException(
-        `Error listing namespaces for system ${sistema}, env ${env}, and language ${language}: ${error.message}`,
+        `Error listing namespaces for system ${system}, env ${env}, and language ${language}: ${error.message}`,
       );
     }
   }
 
-  async createNamespace(sistema: string, namespace: string): Promise<void> {
+  async createNamespace(system: string, namespace: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, 'dev');
       const langs = await getLanguages(this.knex, envId);
 
       const baseLang = langs.find((lang) => lang.isBase === 1);
       if (!baseLang) {
-        throw new BadRequestException(`No base language found for system ${sistema} in 'dev' environment`);
+        throw new BadRequestException(`No base language found for system ${system} in 'dev' environment`);
       }
 
       const existing = await this.knex('namespaces').where({ language_id: baseLang.id, name: namespace }).first('id');
       if (existing) {
-        throw new BadRequestException(`Namespace '${namespace}' already exists for system ${sistema}.`);
+        throw new BadRequestException(`Namespace '${namespace}' already exists for system ${system}.`);
       }
 
       await this.knex.transaction(async (trx) => {
@@ -58,27 +58,27 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
         }
       });
 
-      this.logger.log(`Namespace '${namespace}' created for system ${sistema}.`);
+      this.logger.log(`Namespace '${namespace}' created for system ${system}.`);
     } catch (error) {
-      this.logger.error(`Error creating namespace '${namespace}' for system ${sistema}: ${error.message}`);
-      throw new BadRequestException(`Error creating namespace '${namespace}' for system ${sistema}: ${error.message}`);
+      this.logger.error(`Error creating namespace '${namespace}' for system ${system}: ${error.message}`);
+      throw new BadRequestException(`Error creating namespace '${namespace}' for system ${system}: ${error.message}`);
     }
   }
 
-  async deleteNamespace(sistema: string, namespace: string): Promise<void> {
+  async deleteNamespace(system: string, namespace: string): Promise<void> {
     try {
-      const systemId = await getSystemId(this.knex, sistema);
+      const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, 'dev');
       const langs = await getLanguages(this.knex, envId);
 
       const baseLang = langs.find((lang) => lang.isBase === 1);
       if (!baseLang) {
-        throw new BadRequestException(`No base language found for system ${sistema} in 'dev' environment`);
+        throw new BadRequestException(`No base language found for system ${system} in 'dev' environment`);
       }
 
       const existing = await this.knex('namespaces').where({ language_id: baseLang.id, name: namespace }).first('id');
       if (!existing) {
-        throw new BadRequestException(`Namespace '${namespace}' does not exist for system ${sistema}.`);
+        throw new BadRequestException(`Namespace '${namespace}' does not exist for system ${system}.`);
       }
 
       await this.knex.transaction(async (trx) => {
@@ -87,10 +87,10 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
         }
       });
 
-      this.logger.log(`Namespace '${namespace}' deleted for system ${sistema}.`);
+      this.logger.log(`Namespace '${namespace}' deleted for system ${system}.`);
     } catch (error) {
-      this.logger.error(`Error deleting namespace '${namespace}' for system ${sistema}: ${error.message}`);
-      throw new BadRequestException(`Error deleting namespace '${namespace}' for system ${sistema}: ${error.message}`);
+      this.logger.error(`Error deleting namespace '${namespace}' for system ${system}: ${error.message}`);
+      throw new BadRequestException(`Error deleting namespace '${namespace}' for system ${system}: ${error.message}`);
     }
   }
 }

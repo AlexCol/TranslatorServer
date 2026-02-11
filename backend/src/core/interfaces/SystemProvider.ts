@@ -1,6 +1,6 @@
 export abstract class SystemProvider {
-  //!sobre sistema
+  //!sobre system
   abstract listSystems(): Promise<string[]>;
-  abstract createSystem(sistema: string): Promise<void>;
-  abstract deleteSystem(sistema: string): Promise<void>;
+  abstract createSystem(system: string): Promise<void>;
+  abstract deleteSystem(system: string): Promise<void>;
 }

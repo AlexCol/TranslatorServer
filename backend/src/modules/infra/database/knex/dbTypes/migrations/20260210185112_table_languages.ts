@@ -4,7 +4,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('languages', (table) => {
     table.increments('id').primary();
     table.integer('environment_id').unsigned().notNullable();
-    table.string('code').notNullable().unique(); // 'pt-BR', 'en-US'
+    table.string('code').notNullable(); // 'pt-BR', 'en-US'
     table.boolean('is_base').notNullable().defaultTo(false); // Marca linguagem base
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
