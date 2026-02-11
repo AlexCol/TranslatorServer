@@ -12,12 +12,14 @@ import {
   ProviderInfo,
   SystemStatus,
 } from '../types';
+import { ensureConnected } from './Database/utils';
+import { waitForConnection } from './Database/utils/waitForConnection';
 
 export class DatabaseProvider implements Provider {
   private readonly logger = new Logger(DatabaseProvider.name);
 
   constructor(private readonly knex: Knex) {
-    void this.ensureConnected();
+    void ensureConnected(this.knex);
   }
 
   //#region Gerenciar Ambientes
@@ -26,7 +28,7 @@ export class DatabaseProvider implements Provider {
   /**********************************************/
   async listEnvironments(): Promise<Environment[]> {
     try {
-      await this.waitForConnection();
+      await waitForConnection(this.knex);
 
       const rows = await this.knex('environments').select('name').orderBy('name');
 
@@ -39,7 +41,7 @@ export class DatabaseProvider implements Provider {
 
   async createEnvironment(env: Environment): Promise<void> {
     try {
-      await this.waitForConnection();
+      await waitForConnection(this.knex);
 
       // Verificar se já existe
       const exists = await this.knex('environments').where({ name: env }).first();
@@ -61,7 +63,7 @@ export class DatabaseProvider implements Provider {
 
   async deleteEnvironment(env: Environment): Promise<void> {
     try {
-      await this.waitForConnection();
+      await waitForConnection(this.knex);
 
       // Verificar se existe
       const envData = await this.knex('environments').where({ name: env }).first();
@@ -175,29 +177,6 @@ export class DatabaseProvider implements Provider {
   /**********************************************/
   /* Métodos Privados                          */
   /**********************************************/
-  private async ensureConnected(): Promise<void> {
-    try {
-      await this.knex.raw('SELECT 1');
-      this.logger.debug('Database connection established');
-    } catch (error) {
-      this.logger.warn(`Database not yet connected: ${error}`);
-    }
-  }
 
-  private async waitForConnection(maxAttempts = 5, delayMs = 1000): Promise<void> {
-    for (let i = 0; i < maxAttempts; i++) {
-      try {
-        await this.knex.raw('SELECT 1');
-        return;
-      } catch (error) {
-        if (i < maxAttempts - 1) {
-          this.logger.debug(`Waiting for database connection (attempt ${i + 1}/${maxAttempts})`);
-          await new Promise((resolve) => setTimeout(resolve, delayMs));
-        } else {
-          throw error;
-        }
-      }
-    }
-  }
   //#endregion
 }
