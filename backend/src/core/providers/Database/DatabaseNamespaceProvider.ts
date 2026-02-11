@@ -5,7 +5,6 @@ import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguage } from './utils/getLanguage';
 import { getLanguages } from './utils/getLanguages';
 import { NamespaceProvider } from '@/core/interfaces/NamespaceProvider';
-import { CatalogEntry, ValidationResult } from '@/core/types';
 
 export class DatabaseNamespaceProvider implements NamespaceProvider {
   private readonly logger = new Logger(DatabaseNamespaceProvider.name);
@@ -22,7 +21,9 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
       const envId = await getEnvironmentId(this.knex, systemId, env);
       const lang = await getLanguage(this.knex, envId, language);
       if (!lang) {
-        throw new Error(`Language '${language}' does not exist for system ${sistema} and environment ${env}`);
+        throw new BadRequestException(
+          `Language '${language}' does not exist for system ${sistema} and environment ${env}`,
+        );
       }
 
       const rows = await this.knex('namespaces').where({ language_id: lang.id }).select('name');
@@ -43,7 +44,7 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
 
       const baseLang = langs.find((lang) => lang.isBase === 1);
       if (!baseLang) {
-        throw new Error(`No base language found for system ${sistema} in 'dev' environment`);
+        throw new BadRequestException(`No base language found for system ${sistema} in 'dev' environment`);
       }
 
       const existing = await this.knex('namespaces').where({ language_id: baseLang.id, name: namespace }).first('id');
@@ -72,7 +73,7 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
 
       const baseLang = langs.find((lang) => lang.isBase === 1);
       if (!baseLang) {
-        throw new Error(`No base language found for system ${sistema} in 'dev' environment`);
+        throw new BadRequestException(`No base language found for system ${sistema} in 'dev' environment`);
       }
 
       const existing = await this.knex('namespaces').where({ language_id: baseLang.id, name: namespace }).first('id');
@@ -91,9 +92,5 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
       this.logger.error(`Error deleting namespace '${namespace}' for system ${sistema}: ${error.message}`);
       throw new BadRequestException(`Error deleting namespace '${namespace}' for system ${sistema}: ${error.message}`);
     }
-  }
-
-  validateNamespace(entry: CatalogEntry): Promise<ValidationResult> {
-    throw new Error('Method not implemented.');
   }
 }

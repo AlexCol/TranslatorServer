@@ -41,6 +41,8 @@ export class DatabaseLanguageProvider implements LanguageProvider {
         is_base: false,
       });
 
+      await this.replacateBaseLanguageNamespaces(sistema, 'dev', language);
+
       this.logger.debug(`Language '${language}' created successfully for system '${sistema}' in 'dev' environment`);
     } catch (error) {
       this.logger.error(`Error creating language '${language}' for system '${sistema}':`, error);
@@ -137,6 +139,48 @@ export class DatabaseLanguageProvider implements LanguageProvider {
       throw new BadRequestException(
         `Error promoting language '${language}' to base for system '${sistema}': ${error.message}`,
       );
+    }
+  }
+
+  /******************************************************/
+  /* Metodos privados                                   */
+  /******************************************************/
+  async replacateBaseLanguageNamespaces(sistema: string, env: string, language: string): Promise<void> {
+    try {
+      const systemId = await getSystemId(this.knex, sistema);
+      const envId = await getEnvironmentId(this.knex, systemId, env);
+      const baseLangRow = await this.knex('languages').where({ environment_id: envId, is_base: true }).first();
+      if (!baseLangRow) {
+        const msg = `No base language found for system '${sistema}' and env '${env}'. Skipping namespace replication.`;
+        this.logger.warn(msg);
+        return;
+      }
+      const baseLangId = baseLangRow.id;
+
+      const newLangRow = await this.knex('languages').where({ environment_id: envId, code: language }).first();
+      if (!newLangRow) {
+        const msg = `New language '${language}' not found for system '${sistema}' and env '${env}'. Skipping namespace replication.`;
+        this.logger.warn(msg);
+        return;
+      }
+      const newLangId = newLangRow.id;
+
+      const namespaces = await this.knex('namespaces').where({ language_id: baseLangId }).select('name');
+      for (const ns of namespaces) {
+        const exists = await this.knex('namespaces').where({ language_id: newLangId, name: ns.name }).first();
+        if (!exists) {
+          await this.knex('namespaces').insert({ language_id: newLangId, name: ns.name });
+          const msg = `Namespace '${ns.name}' replicated to language '${language}' for system '${sistema}' and env '${env}'.`;
+          this.logger.debug(msg);
+        } else {
+          const msg = `Namespace '${ns.name}' already exists for language '${language}' in system '${sistema}' and env '${env}'. Skipping.`;
+          this.logger.debug(msg);
+        }
+      }
+    } catch (error) {
+      const msg = `Error replicating namespaces from base language to '${language}' for system '${sistema}' and env '${env}': ${error.message}`;
+      this.logger.error(msg);
+      throw new BadRequestException(msg);
     }
   }
 }

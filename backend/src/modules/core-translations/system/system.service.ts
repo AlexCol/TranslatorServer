@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { translationsCache } from '../translations.module';
+import { translationsCache } from '../core-translations.module';
 import { SystemProvider } from '@/core/interfaces/SystemProvider';
 
 @Injectable()
