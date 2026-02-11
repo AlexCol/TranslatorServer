@@ -1,9 +1,9 @@
-import { CatalogEntry, LoadResult, ProviderInfo, SystemStatus, TranslationStatus } from '../types';
+import { CatalogEntry, TranslationStatus } from '../types';
 
 export abstract class TranslationProvider {
   //!carrega o json da tradução
-  abstract loadWithFallBack(entry: CatalogEntry): Promise<LoadResult>;
-  abstract loadWithoutFallBack(entry: CatalogEntry): Promise<LoadResult>;
+  abstract loadWithFallBack(entry: CatalogEntry): Promise<Record<string, any>>;
+  abstract loadWithoutFallBack(entry: CatalogEntry): Promise<Record<string, any>>;
 
   //!sobre chaves
   abstract createKey(entry: CatalogEntry, key: string, value: string): Promise<void>;
@@ -13,6 +13,4 @@ export abstract class TranslationProvider {
 
   //!status e informações gerais
   abstract getTranslationStatus(entry: CatalogEntry): Promise<TranslationStatus>;
-  abstract getProviderInfo(): Promise<ProviderInfo>;
-  abstract getStats(env: string, sistema: string): Promise<SystemStatus>;
 }

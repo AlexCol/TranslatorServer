@@ -88,4 +88,8 @@ export class TranslationsService {
     translationsCache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
+
+  async getTranslationStatus(entry: CatalogEntry): Promise<Record<string, any>> {
+    return await this.provider.getTranslationStatus(entry);
+  }
 }

@@ -1,8 +1,6 @@
-import { Language, Namespace, Sistema } from './_Simples';
-
 export type CatalogEntry = {
-  sistema: Sistema;
+  sistema: string;
   environment: string;
-  language: Language;
-  namespace: Namespace;
+  language: string;
+  namespace: string;
 };

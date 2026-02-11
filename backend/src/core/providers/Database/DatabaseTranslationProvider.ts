@@ -6,7 +6,7 @@ import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguages } from './utils/getLanguages';
 import { getNamespaceId } from './utils/getNamespaceId';
 import { TranslationProvider } from '@/core/interfaces/TranslationProvider';
-import { CatalogEntry, LoadResult, TranslationStatus, ProviderInfo, SystemStatus } from '@/core/types';
+import { CatalogEntry, TranslationStatus } from '@/core/types';
 
 export class DatabaseTranslationProvider implements TranslationProvider {
   private readonly logger = new Logger(DatabaseTranslationProvider.name);
@@ -18,7 +18,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   }
 
   //!carrega o json da tradução
-  async loadWithFallBack(entry: CatalogEntry): Promise<LoadResult> {
+  async loadWithFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     try {
       const sysId = await getSystemId(this.knex, entry.sistema);
       const envId = await getEnvironmentId(this.knex, sysId, entry.environment);
@@ -55,7 +55,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
     }
   }
 
-  async loadWithoutFallBack(entry: CatalogEntry): Promise<LoadResult> {
+  async loadWithoutFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     try {
       //? dados para busca
       const sysId = await getSystemId(this.knex, entry.sistema);
@@ -198,14 +198,26 @@ export class DatabaseTranslationProvider implements TranslationProvider {
 
   //!status e informações gerais
   async getTranslationStatus(entry: CatalogEntry): Promise<TranslationStatus> {
-    throw new Error('Method not implemented.');
-  }
+    try {
+      const json = await this.loadWithoutFallBack(entry);
+      const totalKeys = Object.keys(json).length;
+      const translatedKeys = Object.values(json).filter((value) => value !== null).length;
+      const missingKeys = totalKeys - translatedKeys;
 
-  async getProviderInfo(): Promise<ProviderInfo> {
-    throw new Error('Method not implemented.');
-  }
-  async getStats(env: string, sistema: string): Promise<SystemStatus> {
-    throw new Error('Method not implemented.');
+      const status = {
+        namespace: entry.namespace,
+        language: entry.language,
+        total: totalKeys,
+        translated: translatedKeys,
+        missing: missingKeys,
+        percentage: totalKeys > 0 ? Math.round((translatedKeys / totalKeys) * 100) : 0,
+      } satisfies TranslationStatus;
+
+      return status;
+    } catch (error) {
+      this.logger.error(`Error getting translation status: ${error.message}`);
+      throw new BadRequestException(`Failed to get translation status: ${error.message}`);
+    }
   }
 
   /******************************************************/

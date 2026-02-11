@@ -27,6 +27,16 @@ export class TranslationsController {
     return await this.systemService.loadWithoutFallBack({ sistema: system, environment, language, namespace });
   }
 
+  @Get(':system/:environment/:language/:namespace/status')
+  async getTranslationStatus(
+    @Param('system') system: string,
+    @Param('environment') environment: string,
+    @Param('language') language: string,
+    @Param('namespace') namespace: string,
+  ) {
+    return await this.systemService.getTranslationStatus({ sistema: system, environment, language, namespace });
+  }
+
   @Post(':system/:namespace/key')
   async createNewKey(
     @Param('system') system: string,
