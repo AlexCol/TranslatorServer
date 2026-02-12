@@ -1,5 +1,5 @@
+import { SessionPayload } from '@/modules/session/dto/SessionPayload';
 import 'fastify';
-import { SessionPayload } from '../../../session/interfaces/sessions-payload';
 
 declare module 'fastify' {
   interface FastifyRequest {

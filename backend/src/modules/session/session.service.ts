@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LoggedUser } from '../auth/authentication/types/loggedUser';
+import { SessionPayload } from './dto/SessionPayload';
 import { SessionCacheService } from './session-cache.service';
-import { SessionPayload } from './dto/UserSession';
 
 @Injectable()
 export class SessionService {

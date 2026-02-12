@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Cache } from '../infra/cache/interface/Cache';
-import { SessionPayload } from './dto/UserSession';
+import { SessionPayload } from './dto/SessionPayload';
 import { SessionData } from './types/SessionData';
 import { generateToken } from '@/common/util/generateToken';
 import envConfig from '@/env.config';
@@ -54,7 +54,7 @@ export class SessionCacheService {
   /* Metodos de Atualização                                                    */
   /*****************************************************************************/
   async updateSessionsByUserId(login: string, newPayload: SessionPayload): Promise<number> {
-    const keys = await this.cache.getKeysByPrefix(`${this.SESSION_PREFIX}*`);
+    const keys = await this.cache.getKeysByPrefix(this.SESSION_PREFIX);
     let updatedCount = 0;
 
     for (const key of keys) {
@@ -64,6 +64,11 @@ export class SessionCacheService {
         if (sessionData.payload.login === login) {
           sessionData.payload = newPayload;
           const ttl = Math.floor((sessionData.expiresAt - Date.now()) / 1000); // mantem o tempo restante
+          if (ttl <= 0) {
+            await this.cache.delete(key);
+            continue;
+          }
+
           await this.cache.set(key, JSON.stringify(sessionData), ttl);
           updatedCount++;
         }
@@ -110,9 +115,9 @@ export class SessionCacheService {
     for (const key of keys) {
       const data = await this.cache.get(key);
       if (data) {
-        const userSession: SessionPayload = JSON.parse(data);
-        if (userSession.login === login) {
-          await this.cache.delKey(key);
+        const sessionData: SessionData = JSON.parse(data);
+        if (sessionData.payload.login === login) {
+          await this.cache.delete(key);
           revokedSessions++;
         }
       }

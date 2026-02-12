@@ -5,7 +5,7 @@ import envConfig from '@/env.config';
 @Injectable()
 export class TranslationsCacheService {
   private readonly cacheKeyPrefix = 'translations:';
-  private readonly ttl = envConfig.session.ttl;
+  private readonly ttl = envConfig.translations.ttl;
 
   constructor(private readonly cache: Cache) {}
 

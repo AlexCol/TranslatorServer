@@ -4,7 +4,7 @@ import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 import { SessionTokenGuard } from './guards/session.guard';
 import { AuthProvider } from './interfaces/AuthProvider';
-import { MockAuthProvider } from './providers/Mock/MockProvider';
+import { buildAuthProvider } from './providers';
 import { SessionModule } from '@/modules/session/session.module';
 
 @Module({
@@ -13,7 +13,7 @@ import { SessionModule } from '@/modules/session/session.module';
     AuthenticationService,
     {
       provide: AuthProvider,
-      useClass: MockAuthProvider, //RedmineAuthProvider,
+      useFactory: buildAuthProvider,
     },
     { provide: APP_GUARD, useClass: SessionTokenGuard },
   ],

@@ -6,7 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import addSessionCookie from './functions/addSessionCookie';
 import { StringResponseDto } from '@/common/dto/MessageResponseDto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
-import { SessionPayload } from '@/modules/session/dto/UserSession';
+import { SessionPayload } from '@/modules/session/dto/SessionPayload';
 import { SessionCacheService } from '@/modules/session/session-cache.service';
 
 @Controller('auth')

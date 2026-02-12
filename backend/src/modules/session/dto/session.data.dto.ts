@@ -1,4 +1,4 @@
-import { SessionPayload } from './UserSession';
+import { SessionPayload } from './SessionPayload';
 
 export class SessionDataDto {
   sessionToken: string;

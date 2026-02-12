@@ -3,10 +3,14 @@ import envConfig from 'src/env.config';
 
 export default function setCors(app: NestFastifyApplication): void {
   const isProduction = envConfig.nodeEnv === 'production';
+  const productionOrigins = envConfig.cors.allowedOrigins
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
   app.enableCors({
     origin: isProduction
-      ? envConfig.cors.allowedOrigins?.split(',') || ['https://meudominio.com']
+      ? productionOrigins
       : (origin, callback) => {
           // Permite localhost e IPs da rede local
           const allowedOrigins = [
