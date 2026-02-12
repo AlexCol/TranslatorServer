@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { StringResponseDto } from './common/MessageResponseDto';
+import { StringResponseDto } from './common/dto/MessageResponseDto';
 import { ApiDoc } from './decorators/api-doc/api-doc';
 
 @Controller()

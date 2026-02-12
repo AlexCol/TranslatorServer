@@ -15,11 +15,11 @@ export class EnvironmentService {
 
   async createEnvironment(system: string, environment: string): Promise<void> {
     await this.provider.createEnvironment(system, environment);
-    this.cache.deleteByPrefix(`${system}:${environment}:`);
+    await this.cache.deleteByPrefix(`${system}:${environment}:`);
   }
 
   async deleteEnvironment(system: string, environment: string): Promise<void> {
     await this.provider.deleteEnvironment(system, environment);
-    this.cache.deleteByPrefix(`${system}:${environment}:`);
+    await this.cache.deleteByPrefix(`${system}:${environment}:`);
   }
 }

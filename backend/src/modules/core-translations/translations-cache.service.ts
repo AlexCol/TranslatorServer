@@ -1,29 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '../infra/cache/interface/Cache';
+import envConfig from '@/env.config';
 
 @Injectable()
 export class TranslationsCacheService {
   private readonly cacheKeyPrefix = 'translations:';
+  private readonly ttl = envConfig.session.ttl;
 
   constructor(private readonly cache: Cache) {}
 
-  get(key: string): Record<string, any> | undefined {
-    return this.cache.get(this.cacheKeyPrefix + key);
+  async get(key: string): Promise<Record<string, any> | undefined> {
+    const data = await this.cache.get(this.cacheKeyPrefix + key);
+    if (!data) {
+      return undefined;
+    }
+
+    return JSON.parse(data);
   }
 
-  set(key: string, value: Record<string, any>): void {
-    this.cache.set(this.cacheKeyPrefix + key, value);
+  async set(key: string, value: Record<string, any>): Promise<void> {
+    const valueString = JSON.stringify(value);
+    await this.cache.set(this.cacheKeyPrefix + key, valueString, this.ttl);
   }
 
-  delete(key: string): void {
-    this.cache.delete(this.cacheKeyPrefix + key);
+  async delete(key: string): Promise<void> {
+    await this.cache.delete(this.cacheKeyPrefix + key);
   }
 
-  deleteByPrefix(prefix: string): void {
-    this.cache.deleteByPrefix(this.cacheKeyPrefix + prefix);
+  async deleteByPrefix(prefix: string): Promise<void> {
+    await this.cache.deleteByPrefix(this.cacheKeyPrefix + prefix);
   }
 
-  clear(): void {
-    this.cache.deleteByPrefix(this.cacheKeyPrefix);
+  async clear(): Promise<void> {
+    await this.cache.deleteByPrefix(this.cacheKeyPrefix);
   }
 }

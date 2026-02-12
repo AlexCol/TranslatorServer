@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { LanguageDto } from './dto/language.dto';
 import { LanguageService } from './language.service';
-import { ArrayStringResponseDto } from '@/common/ArrayStringResponse.dto';
-import { StringResponseDto } from '@/common/MessageResponseDto';
+import { ArrayStringResponseDto } from '@/common/dto/ArrayStringResponse.dto';
+import { StringResponseDto } from '@/common/dto/MessageResponseDto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 
 const paramsDescription = {

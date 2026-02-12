@@ -17,13 +17,13 @@ export class LanguageService {
   async createLanguage(system: string, language: string): Promise<void> {
     validateLanguage(language);
     await this.provider.createLanguage(system, language);
-    this.cache.deleteByPrefix(`${system}:dev:${language}:`);
+    await this.cache.deleteByPrefix(`${system}:dev:${language}:`);
   }
 
   async deleteLanguage(system: string, language: string): Promise<void> {
     validateLanguage(language);
     await this.provider.deleteLanguage(system, language);
-    this.cache.deleteByPrefix(`${system}:dev:${language}:`);
+    await this.cache.deleteByPrefix(`${system}:dev:${language}:`);
   }
 
   async getBaseLanguage(system: string, environment: string): Promise<string | null> {

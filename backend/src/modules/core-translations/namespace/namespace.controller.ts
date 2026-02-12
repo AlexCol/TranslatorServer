@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { NamespaceDto } from './dto/namespace.dto';
 import { NamespaceService } from './namespace.service';
-import { ArrayStringResponseDto } from '@/common/ArrayStringResponse.dto';
+import { ArrayStringResponseDto } from '@/common/dto/ArrayStringResponse.dto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 
 @Controller('namespaces')

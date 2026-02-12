@@ -20,7 +20,7 @@ export class CdnPublisherService {
   /******************************************************/
   async pushToCdn(system: string, environment: string): Promise<string> {
     await this.cdnPublisher.clearFiles(system, environment);
-    this.cache.deleteByPrefix(`${system}:${environment}:`);
+    await this.cache.deleteByPrefix(`${system}:${environment}:`);
     const langs = await this.getLanguages(system, environment);
 
     await Promise.all(

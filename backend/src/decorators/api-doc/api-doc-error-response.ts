@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { ErrorResponseDto } from '@/common/ErrorResponse.dto';
+import { ErrorResponseDto } from '@/common/dto/ErrorResponse.dto';
 
 export function ApiDocErrorResponse(errCodes: number[]) {
   //! array base para os decorators

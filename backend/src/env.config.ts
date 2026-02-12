@@ -5,6 +5,10 @@ dotenv.config({ quiet: true });
 const envConfig = {
   nodeEnv: process.env.NODE_ENV || 'development',
 
+  session: {
+    ttl: parseInt(process.env.SESSION_TTL || '604800', 10), // time to live in seconds (default: 7 days)
+  },
+
   redmine: {
     url: process.env.REDMINE_URL || '',
   },

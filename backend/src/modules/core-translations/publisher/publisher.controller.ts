@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { PublishDto } from './dto/publish.dto';
 import { PublisherService } from './publisher.service';
-import { StringResponseDto } from '@/common/MessageResponseDto';
+import { StringResponseDto } from '@/common/dto/MessageResponseDto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 
 @Controller('publisher')

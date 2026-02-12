@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { EnvironmentDto } from './dto/environment.dto';
 import { EnvironmentService } from './environment.service';
-import { ArrayStringResponseDto } from '@/common/ArrayStringResponse.dto';
+import { ArrayStringResponseDto } from '@/common/dto/ArrayStringResponse.dto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 
 @Controller('environment')

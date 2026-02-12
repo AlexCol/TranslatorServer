@@ -15,11 +15,11 @@ export class SystemService {
 
   async createSystem(system: string): Promise<void> {
     await this.provider.createSystem(system);
-    this.cache.clear(); // Clear cache after creating a new system
+    await this.cache.clear(); // Clear cache after creating a new system
   }
 
   async deleteSystem(system: string): Promise<void> {
     await this.provider.deleteSystem(system);
-    this.cache.clear(); // Clear cache after deleting a system
+    await this.cache.clear(); // Clear cache after deleting a system
   }
 }

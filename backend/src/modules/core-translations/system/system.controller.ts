@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { SystemDto } from './dto/system.dto';
 import { SystemService } from './system.service';
-import { ArrayStringResponseDto } from '@/common/ArrayStringResponse.dto';
+import { ArrayStringResponseDto } from '@/common/dto/ArrayStringResponse.dto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 
 @Controller('system')

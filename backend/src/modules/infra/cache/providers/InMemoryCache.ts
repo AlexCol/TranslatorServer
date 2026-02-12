@@ -1,27 +1,21 @@
-import { Logger } from '@nestjs/common';
 import { Cache } from '../interface/Cache';
 
 export class InMemoryCache implements Cache {
-  private cache = new Map<string, Record<string, any>>();
-  private logger = new Logger(InMemoryCache.name);
+  private cache = new Map<string, string>();
 
-  get(key: string): Record<string, any> | undefined {
-    //this.logger.debug(`Cache get: ${key}`);
+  async get(key: string): Promise<string | undefined> {
     return this.cache.get(key);
   }
 
-  set(key: string, value: Record<string, any>): void {
-    //this.logger.debug(`Cache set: ${key}`);
+  async set(key: string, value: string): Promise<void> {
     this.cache.set(key, value);
   }
 
-  delete(key: string): void {
-    //this.logger.debug(`Cache delete: ${key}`);
+  async delete(key: string): Promise<void> {
     this.cache.delete(key);
   }
 
-  deleteByPrefix(prefix: string): void {
-    //this.logger.debug(`Cache delete by prefix: ${prefix}`);
+  async deleteByPrefix(prefix: string): Promise<void> {
     for (const key of this.cache.keys()) {
       if (key.startsWith(prefix)) {
         this.cache.delete(key);
@@ -29,8 +23,21 @@ export class InMemoryCache implements Cache {
     }
   }
 
-  clear(): void {
-    //this.logger.debug(`Cache clear`);
+  async clear(): Promise<void> {
     this.cache.clear();
+  }
+
+  async getKeysByPrefix(prefix: string): Promise<string[]> {
+    const keys: string[] = [];
+    for (const key of this.cache.keys()) {
+      if (key.startsWith(prefix)) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  }
+
+  async delKey(key: string): Promise<void> {
+    this.cache.delete(key);
   }
 }

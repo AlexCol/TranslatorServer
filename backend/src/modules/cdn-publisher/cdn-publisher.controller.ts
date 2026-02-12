@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { CdnPublisherService } from './cdn-publisher.service';
 import { CdnPublisherDto } from './dto/cdn-publisher.dto';
-import { StringResponseDto } from '@/common/MessageResponseDto';
+import { StringResponseDto } from '@/common/dto/MessageResponseDto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 
 @Controller('cdn-publisher')
