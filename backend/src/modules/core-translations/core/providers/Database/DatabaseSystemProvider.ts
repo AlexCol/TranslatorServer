@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { System } from './entities/system.entity';
 import { ensureConnected } from './utils';
-import { SystemProvider } from '@/core/interfaces/SystemProvider';
+import { SystemProvider } from '@/modules/core-translations/core/interfaces/SystemProvider';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseSystemProvider implements SystemProvider {

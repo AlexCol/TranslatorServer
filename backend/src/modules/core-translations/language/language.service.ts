@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { validateLanguage } from '../common/validateLanguage';
-import { LanguageProvider } from '@/core/interfaces/LanguageProvider';
+import { LanguageProvider } from '@/modules/core-translations/core/interfaces/LanguageProvider';
 import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()

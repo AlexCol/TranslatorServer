@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { validateLanguage } from '../common/validateLanguage';
-import { NamespaceProvider } from '@/core/interfaces/NamespaceProvider';
+import { NamespaceProvider } from '@/modules/core-translations/core/interfaces/NamespaceProvider';
 
 @Injectable()
 export class NamespaceService {

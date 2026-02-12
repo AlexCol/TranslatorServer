@@ -4,7 +4,7 @@ import { ensureConnected, getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguage } from './utils/getLanguage';
 import { getLanguages } from './utils/getLanguages';
-import { NamespaceProvider } from '@/core/interfaces/NamespaceProvider';
+import { NamespaceProvider } from '@/modules/core-translations/core/interfaces/NamespaceProvider';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseNamespaceProvider implements NamespaceProvider {

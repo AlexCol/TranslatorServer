@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TranslationProvider } from '@/core/interfaces/TranslationProvider';
-import { CatalogEntry } from '@/core/types';
+import { TranslationProvider } from '@/modules/core-translations/core/interfaces/TranslationProvider';
+import { CatalogEntry } from '@/modules/core-translations/core/types';
 import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()

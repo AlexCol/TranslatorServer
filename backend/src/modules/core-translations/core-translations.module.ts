@@ -11,7 +11,7 @@ import { SystemController } from './system/system.controller';
 import { SystemService } from './system/system.service';
 import { TranslationsController } from './translations/translations.controller';
 import { TranslationsService } from './translations/translations.service';
-import { databaseProviders } from '@/core/providers/Database';
+import { databaseProviders } from '@/modules/core-translations/core/providers/Database';
 
 const controllers = [
   SystemController,

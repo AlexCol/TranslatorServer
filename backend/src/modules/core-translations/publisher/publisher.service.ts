@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PublishDto } from './dto/publish.dto';
-import { PublisherProvider } from '@/core/interfaces/PublisherProvider';
-import { PublishProps } from '@/core/types/PublishProps';
+import { PublisherProvider } from '@/modules/core-translations/core/interfaces/PublisherProvider';
+import { PublishProps } from '@/modules/core-translations/core/types/PublishProps';
 
 @Injectable()
 export class PublisherService {

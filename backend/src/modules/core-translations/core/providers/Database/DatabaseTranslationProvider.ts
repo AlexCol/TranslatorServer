@@ -5,8 +5,8 @@ import { ensureConnected, getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguages } from './utils/getLanguages';
 import { getNamespaceId } from './utils/getNamespaceId';
-import { TranslationProvider } from '@/core/interfaces/TranslationProvider';
-import { CatalogEntry, TranslationStatus } from '@/core/types';
+import { TranslationProvider } from '@/modules/core-translations/core/interfaces/TranslationProvider';
+import { CatalogEntry, TranslationStatus } from '@/modules/core-translations/core/types';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseTranslationProvider implements TranslationProvider {

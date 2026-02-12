@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { ensureConnected, getSystemId } from './utils';
-import { EnvironmentProvider } from '@/core/interfaces/EnvironmentProvider';
+import { EnvironmentProvider } from '@/modules/core-translations/core/interfaces/EnvironmentProvider';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseEnvironmentProvider implements EnvironmentProvider {

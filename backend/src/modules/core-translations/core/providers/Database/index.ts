@@ -5,12 +5,12 @@ import { DatabaseNamespaceProvider } from './DatabaseNamespaceProvider';
 import { DatabasePublisherProvider } from './DatabasePublisherProvider';
 import { DatabaseSystemProvider } from './DatabaseSystemProvider';
 import { DatabaseTranslationProvider } from './DatabaseTranslationProvider';
-import { EnvironmentProvider } from '@/core/interfaces/EnvironmentProvider';
-import { LanguageProvider } from '@/core/interfaces/LanguageProvider';
-import { NamespaceProvider } from '@/core/interfaces/NamespaceProvider';
-import { PublisherProvider } from '@/core/interfaces/PublisherProvider';
-import { SystemProvider } from '@/core/interfaces/SystemProvider';
-import { TranslationProvider } from '@/core/interfaces/TranslationProvider';
+import { EnvironmentProvider } from '@/modules/core-translations/core/interfaces/EnvironmentProvider';
+import { LanguageProvider } from '@/modules/core-translations/core/interfaces/LanguageProvider';
+import { NamespaceProvider } from '@/modules/core-translations/core/interfaces/NamespaceProvider';
+import { PublisherProvider } from '@/modules/core-translations/core/interfaces/PublisherProvider';
+import { SystemProvider } from '@/modules/core-translations/core/interfaces/SystemProvider';
+import { TranslationProvider } from '@/modules/core-translations/core/interfaces/TranslationProvider';
 
 export const databaseProviders: Provider[] = [
   {

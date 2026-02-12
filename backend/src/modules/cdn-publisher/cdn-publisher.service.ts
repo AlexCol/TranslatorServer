@@ -3,12 +3,24 @@ import { ModuleRef } from '@nestjs/core';
 import { LanguageService } from '../core-translations/language/language.service';
 import { NamespaceService } from '../core-translations/namespace/namespace.service';
 import { TranslationsService } from '../core-translations/translations/translations.service';
+import { Cache } from '../infra/cache/interface/Cache';
+import { CdnPublisher } from './interfaces/CdnPublisher';
 
 @Injectable()
 export class CdnPublisherService {
-  constructor(private readonly modRef: ModuleRef) {}
+  constructor(
+    private readonly cache: Cache,
+    private readonly cdnPublisher: CdnPublisher,
+    private readonly modRef: ModuleRef,
+  ) {}
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos publicos                                   */
+  /******************************************************/
   async pushToCdn(system: string, environment: string): Promise<string> {
+    await this.cdnPublisher.clearFiles(system, environment);
+    this.cache.deleteByPrefix(`${system}:${environment}:`);
     const langs = await this.getLanguages(system, environment);
 
     await Promise.all(
@@ -16,10 +28,14 @@ export class CdnPublisherService {
         return this.processLanguage(system, environment, lang);
       }),
     );
-
     return 'foi';
   }
+  //#endregion
 
+  //#region Metodos privados
+  /******************************************************/
+  /* Metodos privados                                   */
+  /******************************************************/
   //! Processa um idioma (chamado em paralelo em pushToCdn)
   private async processLanguage(system: string, environment: string, language: string): Promise<void> {
     const namespaces = await this.getNamespaces(system, environment, language);
@@ -36,8 +52,7 @@ export class CdnPublisherService {
     const translations = await this.getTranslations(system, environment, language, namespace);
 
     if (translations) {
-      // TODO: Upload para CDN aqui
-      // await this.uploadToCdn(system, environment, language, namespace, translations);
+      await this.cdnPublisher.uploadToCdn(system, environment, language, namespace, translations);
     }
   }
 
@@ -55,4 +70,5 @@ export class CdnPublisherService {
     const translationsService = this.modRef.get(TranslationsService, { strict: false });
     return translationsService.loadWithFallBack({ system, environment, language, namespace });
   }
+  //#endregion
 }

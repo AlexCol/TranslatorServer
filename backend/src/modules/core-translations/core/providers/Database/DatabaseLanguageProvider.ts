@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { ensureConnected, getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
-import { LanguageProvider } from '@/core/interfaces/LanguageProvider';
+import { LanguageProvider } from '@/modules/core-translations/core/interfaces/LanguageProvider';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseLanguageProvider implements LanguageProvider {
