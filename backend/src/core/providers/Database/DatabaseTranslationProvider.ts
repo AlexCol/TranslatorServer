@@ -36,7 +36,12 @@ export class DatabaseTranslationProvider implements TranslationProvider {
       const language = entry.language;
       const mergedJsonObj = { ...baseJsonObj };
       if (language.length !== 2 && language.includes('-')) {
-        const baseLanguageTranslation = await this.getTranslation({ ...entry, language: language.split('-')[0] });
+        let baseLanguageTranslation: Translation;
+        try {
+          baseLanguageTranslation = await this.getTranslation({ ...entry, language: language.split('-')[0] });
+        } catch {
+          baseLanguageTranslation = { id: 0, namespaceId: 0, json: '{}' };
+        }
         const languageTranslation = await this.getTranslation(entry);
 
         const baseLanguageJsonObj = JSON.parse(baseLanguageTranslation.json || '{}');
