@@ -1,6 +1,8 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class CdnPublisherDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9-_]+$/, {
@@ -8,6 +10,7 @@ export class CdnPublisherDto {
   })
   system: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9-_]+$/, {

@@ -28,7 +28,7 @@ export class CdnPublisherService {
         return this.processLanguage(system, environment, lang);
       }),
     );
-    return 'foi';
+    return 'Publicação para CDN concluída com sucesso!';
   }
   //#endregion
 

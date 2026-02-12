@@ -40,7 +40,7 @@ export class DatabasePublisherProvider implements PublisherProvider {
       await this.updateBaseLanguage(trx, fromLangId, toLangId);
     });
 
-    return 'Tudo ok';
+    return 'Namespace published successfully!';
   }
   //#endregion
 

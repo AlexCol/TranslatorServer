@@ -5,9 +5,10 @@ import { GlobalErrorFilter } from './filters/GlobalError.filter';
 import { CdnPublisherModule } from './modules/cdn-publisher/cdn-publisher.module';
 import { CoreTranslationsModule } from './modules/core-translations/core-translations.module';
 import { InfraModule } from './modules/infra/infra.module';
+import { AuthenticationModule } from './modules/auth/authentication/authentication.module';
 
 @Module({
-  imports: [InfraModule, CoreTranslationsModule, CdnPublisherModule],
+  imports: [InfraModule, CoreTranslationsModule, CdnPublisherModule, AuthenticationModule],
   controllers: [AppController],
   providers: [{ provide: APP_FILTER, useClass: GlobalErrorFilter }],
 })

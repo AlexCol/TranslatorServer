@@ -211,7 +211,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
       const translatedKeys = Object.values(json).filter((value) => value !== null).length;
       const missingKeys = totalKeys - translatedKeys;
 
-      const status = {
+      const status: TranslationStatus = {
         namespace: entry.namespace,
         language: entry.language,
         total: totalKeys,

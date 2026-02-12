@@ -1,5 +1,7 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
 export class CreateKeyDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9-_]+$/, {
@@ -7,6 +9,7 @@ export class CreateKeyDto {
   })
   system: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9-_]+$/, {
@@ -14,6 +17,7 @@ export class CreateKeyDto {
   })
   namespace: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   key: string;

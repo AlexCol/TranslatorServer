@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TranslationProvider } from '@/modules/core-translations/core/interfaces/TranslationProvider';
-import { CatalogEntry } from '@/modules/core-translations/core/types';
+import { CatalogEntry, TranslationStatus } from '@/modules/core-translations/core/types';
 import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()
@@ -92,7 +92,7 @@ export class TranslationsService {
     return result;
   }
 
-  async getTranslationStatus(entry: CatalogEntry): Promise<Record<string, any>> {
+  async getTranslationStatus(entry: CatalogEntry): Promise<TranslationStatus> {
     return await this.provider.getTranslationStatus(entry);
   }
 }
