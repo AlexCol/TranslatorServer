@@ -1,7 +1,7 @@
 import { BadRequestException, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { System } from './entities/system.entity';
-import { ensureConnected, waitForConnection } from './utils';
+import { ensureConnected } from './utils';
 import { SystemProvider } from '@/core/interfaces/SystemProvider';
 
 export class DatabaseSystemProvider implements SystemProvider {
@@ -15,7 +15,6 @@ export class DatabaseSystemProvider implements SystemProvider {
 
   async listSystems(): Promise<string[]> {
     try {
-      await waitForConnection(this.knex);
       const rows = await this.knex.select('*').from<System>('systems').orderBy('name', 'asc');
       return rows.map((row) => row.name);
     } catch (error) {
@@ -26,7 +25,6 @@ export class DatabaseSystemProvider implements SystemProvider {
 
   async createSystem(system: string): Promise<void> {
     try {
-      await waitForConnection(this.knex);
       const exists = await this.knex('systems').where({ name: system }).first();
       if (exists) {
         throw new BadRequestException(`System '${system}' already exists`);
@@ -44,7 +42,6 @@ export class DatabaseSystemProvider implements SystemProvider {
 
   async deleteSystem(system: string): Promise<void> {
     try {
-      await waitForConnection(this.knex);
       const exists = await this.knex('systems').where({ name: system }).first();
       if (!exists) {
         throw new BadRequestException(`System '${system}' does not exist`);

@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { validateLanguage } from '../common/validateLanguage';
-import { translationsCache } from '../core-translations.module';
 import { LanguageProvider } from '@/core/interfaces/LanguageProvider';
+import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()
 export class LanguageService {
-  constructor(private readonly provider: LanguageProvider) {}
+  constructor(
+    private readonly cache: Cache,
+    private readonly provider: LanguageProvider,
+  ) {}
 
   async listLanguages(system: string, environment: string): Promise<string[]> {
     return this.provider.listLanguages(system, environment);
@@ -14,13 +17,13 @@ export class LanguageService {
   async createLanguage(system: string, language: string): Promise<void> {
     validateLanguage(language);
     await this.provider.createLanguage(system, language);
-    translationsCache.deleteByPrefix(`${system}:dev:${language}:`);
+    this.cache.deleteByPrefix(`${system}:dev:${language}:`);
   }
 
   async deleteLanguage(system: string, language: string): Promise<void> {
     validateLanguage(language);
     await this.provider.deleteLanguage(system, language);
-    translationsCache.deleteByPrefix(`${system}:dev:${language}:`);
+    this.cache.deleteByPrefix(`${system}:dev:${language}:`);
   }
 
   async getBaseLanguage(system: string, environment: string): Promise<string | null> {

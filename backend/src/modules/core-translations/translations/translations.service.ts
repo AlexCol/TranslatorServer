@@ -1,18 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { translationsCache } from '../core-translations.module';
 import { TranslationProvider } from '@/core/interfaces/TranslationProvider';
 import { CatalogEntry } from '@/core/types';
+import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()
 export class TranslationsService {
   private readonly logger = new Logger(TranslationsService.name);
 
-  constructor(private readonly provider: TranslationProvider) {}
+  constructor(
+    private readonly cache: Cache,
+    private readonly provider: TranslationProvider,
+  ) {}
 
   async loadWithFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     const cacheKey = `${entry.system}:${entry.environment}:${entry.language}:${entry.namespace}`;
 
-    let json = translationsCache.get(cacheKey);
+    let json = this.cache.get(cacheKey);
     if (json) {
       this.logger.debug(`Cache hit for ${cacheKey}`);
       return json;
@@ -20,7 +23,7 @@ export class TranslationsService {
 
     json = await this.provider.loadWithFallBack(entry);
     this.logger.debug(`Cache miss for ${cacheKey}`);
-    translationsCache.set(cacheKey, json);
+    this.cache.set(cacheKey, json);
 
     return json;
   }
@@ -28,7 +31,7 @@ export class TranslationsService {
   async loadWithoutFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     const cacheKey = `${entry.system}:${entry.environment}:${entry.language}:${entry.namespace}:clean`;
 
-    let json = translationsCache.get(cacheKey);
+    let json = this.cache.get(cacheKey);
     if (json) {
       this.logger.debug(`Cache hit for ${cacheKey}`);
       return json;
@@ -36,7 +39,7 @@ export class TranslationsService {
 
     json = await this.provider.loadWithoutFallBack(entry);
     this.logger.debug(`Cache miss for ${cacheKey}`);
-    translationsCache.set(cacheKey, json);
+    this.cache.set(cacheKey, json);
 
     return json;
   }
@@ -49,7 +52,7 @@ export class TranslationsService {
       namespace: namespace,
     } satisfies CatalogEntry;
     const result = await this.provider.createKey(newKeyCatalog, key, value);
-    translationsCache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
+    this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 
@@ -61,7 +64,7 @@ export class TranslationsService {
       namespace: namespace,
     } satisfies CatalogEntry;
     const result = await this.provider.createTranslation(entry, key, value);
-    translationsCache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
+    this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 
@@ -73,7 +76,7 @@ export class TranslationsService {
       namespace: namespace,
     } satisfies CatalogEntry;
     const result = await this.provider.updateKey(entry, key, value);
-    translationsCache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
+    this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 
@@ -85,7 +88,7 @@ export class TranslationsService {
       namespace: namespace,
     } satisfies CatalogEntry;
     const result = await this.provider.deleteKey(entry, key);
-    translationsCache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
+    this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 

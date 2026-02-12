@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { translationsCache } from '../core-translations.module';
 import { EnvironmentProvider } from '@/core/interfaces/EnvironmentProvider';
+import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()
 export class EnvironmentService {
-  constructor(private readonly provider: EnvironmentProvider) {}
+  constructor(
+    private readonly cache: Cache,
+    private readonly provider: EnvironmentProvider,
+  ) {}
 
   async listEnvironments(system: string): Promise<string[]> {
     return this.provider.listEnvironments(system);
@@ -12,11 +15,11 @@ export class EnvironmentService {
 
   async createEnvironment(system: string, environment: string): Promise<void> {
     await this.provider.createEnvironment(system, environment);
-    translationsCache.deleteByPrefix(`${system}:${environment}:`);
+    this.cache.deleteByPrefix(`${system}:${environment}:`);
   }
 
   async deleteEnvironment(system: string, environment: string): Promise<void> {
     await this.provider.deleteEnvironment(system, environment);
-    translationsCache.deleteByPrefix(`${system}:${environment}:`);
+    this.cache.deleteByPrefix(`${system}:${environment}:`);
   }
 }

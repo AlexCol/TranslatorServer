@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
+import { Cache } from '../interface/Cache';
 
-export class InMemoryCache {
+export class InMemoryCache implements Cache {
   private cache = new Map<string, Record<string, any>>();
   private logger = new Logger(InMemoryCache.name);
 

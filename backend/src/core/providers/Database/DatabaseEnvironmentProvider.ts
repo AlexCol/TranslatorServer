@@ -1,6 +1,6 @@
 import { BadRequestException, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
-import { ensureConnected, getSystemId, waitForConnection } from './utils';
+import { ensureConnected, getSystemId } from './utils';
 import { EnvironmentProvider } from '@/core/interfaces/EnvironmentProvider';
 
 export class DatabaseEnvironmentProvider implements EnvironmentProvider {
@@ -14,7 +14,6 @@ export class DatabaseEnvironmentProvider implements EnvironmentProvider {
 
   async listEnvironments(system: string): Promise<string[]> {
     try {
-      await waitForConnection(this.knex);
       const systemId = await getSystemId(this.knex, system);
       const rows = await this.knex('environments').where({ system_id: systemId }).select('name').orderBy('name');
       return rows.map((row) => row.name);
@@ -26,7 +25,6 @@ export class DatabaseEnvironmentProvider implements EnvironmentProvider {
 
   async createEnvironment(system: string, environment: string): Promise<void> {
     try {
-      await waitForConnection(this.knex);
       const systemId = await getSystemId(this.knex, system);
       const exists = await this.knex('environments').where({ system_id: systemId, name: environment }).first();
       if (exists) {
@@ -49,7 +47,6 @@ export class DatabaseEnvironmentProvider implements EnvironmentProvider {
         throw new BadRequestException(`Cannot delete reserved environment '${environment}' for system '${system}'`);
       }
 
-      await waitForConnection(this.knex);
       const systemId = await getSystemId(this.knex, system);
       const exists = await this.knex('environments').where({ system_id: systemId, name: environment }).first();
       if (!exists) {
