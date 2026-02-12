@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { TranslationsCacheService } from '../translations-cache.service';
 import { TranslationProvider } from '@/modules/core-translations/core/interfaces/TranslationProvider';
 import { CatalogEntry, TranslationStatus } from '@/modules/core-translations/core/types';
-import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()
 export class TranslationsService {
   private readonly logger = new Logger(TranslationsService.name);
 
   constructor(
-    private readonly cache: Cache,
+    private readonly cache: TranslationsCacheService,
     private readonly provider: TranslationProvider,
   ) {}
 

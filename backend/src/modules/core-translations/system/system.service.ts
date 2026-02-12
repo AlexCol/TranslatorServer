@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { TranslationsCacheService } from '../translations-cache.service';
 import { SystemProvider } from '@/modules/core-translations/core/interfaces/SystemProvider';
-import { Cache } from '@/modules/infra/cache/interface/Cache';
 
 @Injectable()
 export class SystemService {
   constructor(
-    private readonly cache: Cache,
+    private readonly cache: TranslationsCacheService,
     private readonly provider: SystemProvider,
   ) {}
 

@@ -3,13 +3,13 @@ import { ModuleRef } from '@nestjs/core';
 import { LanguageService } from '../core-translations/language/language.service';
 import { NamespaceService } from '../core-translations/namespace/namespace.service';
 import { TranslationsService } from '../core-translations/translations/translations.service';
-import { Cache } from '../infra/cache/interface/Cache';
+import { TranslationsCacheService } from '../core-translations/translations-cache.service';
 import { CdnPublisher } from './interfaces/CdnPublisher';
 
 @Injectable()
 export class CdnPublisherService {
   constructor(
-    private readonly cache: Cache,
+    private readonly cache: TranslationsCacheService,
     private readonly cdnPublisher: CdnPublisher,
     private readonly modRef: ModuleRef,
   ) {}

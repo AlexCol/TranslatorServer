@@ -4,12 +4,7 @@ import { InMemoryCache } from './providers/InMemoryCache';
 
 @Global()
 @Module({
-  providers: [
-    {
-      provide: Cache,
-      useClass: InMemoryCache,
-    },
-  ],
+  providers: [{ provide: Cache, useClass: InMemoryCache }],
   exports: [Cache],
 })
 export class CacheModule {}
