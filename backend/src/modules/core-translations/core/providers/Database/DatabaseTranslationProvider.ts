@@ -99,7 +99,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
       const baseTranslation = await this.getTranslation(entry);
       const baseJson = JSON.parse(baseTranslation?.json || '{}');
 
-      if (baseJson[key]) {
+      if (Object.hasOwn(baseJson, key)) {
         throw new BadRequestException(`Key "${key}" already exists.`);
       }
 
@@ -128,7 +128,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
       const baseJson = await this.getTranslation({ ...entry, language: '' });
       const baseJsonObj = JSON.parse(baseJson.json || '{}');
 
-      if (!baseJsonObj[key]) {
+      if (!Object.hasOwn(baseJsonObj, key)) {
         throw new BadRequestException(`Key "${key}" does not exist in base language.`);
       }
 
@@ -160,7 +160,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
       const json = await this.getTranslation(entry);
       const jsonObj = JSON.parse(json.json || '{}');
 
-      if (!jsonObj[key]) {
+      if (!Object.hasOwn(jsonObj, key)) {
         throw new BadRequestException(`Key "${key}" does not exist.`);
       }
 
@@ -186,7 +186,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         for (const lang of langs) {
           const translation = await this.getTranslation({ ...entry, language: lang.code }, trx);
           const jsonObj = JSON.parse(translation.json || '{}');
-          if (jsonObj[key]) {
+          if (Object.hasOwn(jsonObj, key)) {
             delete jsonObj[key];
             await trx('translations')
               .where({ id: translation.id })
@@ -265,3 +265,4 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   }
   //endregion
 }
+

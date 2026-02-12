@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Language } from './entities/language.entity';
 import { Translation } from './entities/translation.entity';
-import { getEnvironmentId, getLanguage, getNamespaceId, getSystemId, getTranslation } from './utils';
+import { getEnvironmentId, getLanguage, getLanguages, getNamespaceId, getSystemId, getTranslation } from './utils';
 import { PublisherProvider } from '@/modules/core-translations/core/interfaces/PublisherProvider';
 import { PublishProps } from '@/modules/core-translations/core/types/PublishProps';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
@@ -37,7 +37,7 @@ export class DatabasePublisherProvider implements PublisherProvider {
       await this.updateTranslation(trx, toTranslation.id, fromTranslation.json);
 
       //? update if is base language
-      await this.updateBaseLanguage(trx, fromLangId, toLangId);
+      await this.updateBaseLanguage(trx, fromLangId, toEnvId, toLangId);
     });
 
     return 'Namespace published successfully!';
@@ -104,24 +104,34 @@ export class DatabasePublisherProvider implements PublisherProvider {
     return trx('translations').where({ id: translationId }).update({ json: newJson, updatedAt: trx.fn.now() });
   }
 
-  private async updateBaseLanguage(trx: Knex, fromLangId: number, toLangId: number): Promise<void> {
+  private async updateBaseLanguage(trx: Knex, fromLangId: number, toEnvId: number, toLangId: number) {
     const fromLang = await trx.select('*').from<Language>('languages').where({ id: fromLangId }).first();
     const toLang = await trx.select('*').from<Language>('languages').where({ id: toLangId }).first();
 
     if (!fromLang || !toLang) {
-      throw new BadRequestException(
-        `Failed to find languages for base language update: fromLangId=${fromLangId}, toLangId=${toLangId}`,
-      );
+      const msg = `Failed to find languages for base language update: fromLangId=${fromLangId}, toLangId=${toLangId}`;
+      throw new BadRequestException(msg);
     }
 
+    //! varrer as linguagens, para atualizar isBase corretamente, para mudar a toLang para ficar igual fromLang e mudar para 0 caso tenha
+    //! outra linguagem com isBase = 1, para evitar ter mais de uma linguagem base
     if (fromLang.isBase !== toLang.isBase) {
-      await trx('languages').where({ id: toLangId }).update({ isBase: fromLang.isBase, updatedAt: trx.fn.now() });
+      const toLangsList = await getLanguages(trx, toEnvId);
+      for (const toLangsItem of toLangsList) {
+        const ehToLang = toLangsItem.id === toLangId;
+        if (ehToLang) {
+          await trx('languages')
+            .where({ id: toLangsItem.id })
+            .update({ isBase: fromLang.isBase, updatedAt: trx.fn.now() });
+          continue;
+        }
 
-      if (fromLang.isBase === 1) {
-        await trx('languages')
-          .where({ isBase: 1 }) // Filtra registros onde isBase é 1
-          .andWhereNot({ code: toLang.code }) // Exclui o registro com o mesmo code de toLang
-          .update({ isBase: 0, updatedAt: trx.fn.now() }); // Atualiza isBase para 0 e define updatedAt para o timestamp atual
+        const fromLangIsBase = fromLang.isBase === 1;
+        const isOtherLang = toLangsItem.id !== toLangId;
+        const wasBaseBefore = toLangsItem.isBase === 1;
+        if (fromLangIsBase && wasBaseBefore && isOtherLang) {
+          await trx('languages').where({ id: toLangsItem.id }).update({ isBase: 0, updatedAt: trx.fn.now() });
+        }
       }
     }
   }

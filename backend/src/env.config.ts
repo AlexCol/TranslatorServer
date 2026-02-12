@@ -2,10 +2,13 @@ import * as dotenv from 'dotenv';
 
 dotenv.config({ quiet: true });
 
-const nodeEnv = process.env.NODE_ENV || 'development';
-
 const envConfig = {
-  nodeEnv,
+  node: {
+    env: process.env.NODE_ENV || 'development',
+    isProd: process.env.NODE_ENV === 'production',
+    isDev: process.env.NODE_ENV === 'development',
+    isTest: process.env.NODE_ENV === 'test',
+  },
 
   session: {
     ttl: parseInt(process.env.SESSION_TTL || '604800', 10), // time to live in seconds (default: 7 days)
