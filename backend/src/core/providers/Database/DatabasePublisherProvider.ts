@@ -1,20 +1,23 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Language } from './entities/language.entity';
 import { Translation } from './entities/translation.entity';
 import { ensureConnected, getEnvironmentId, getLanguage, getNamespaceId, getSystemId, getTranslation } from './utils';
 import { PublisherProvider } from '@/core/interfaces/PublisherProvider';
 import { PublishProps } from '@/core/types/PublishProps';
+import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabasePublisherProvider implements PublisherProvider {
   private readonly logger = new Logger(DatabasePublisherProvider.name);
-  private readonly knex: Knex;
 
-  constructor(knex: Knex) {
-    this.knex = knex;
-    void ensureConnected(this.knex);
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
+    void ensureConnected(this.knex, DatabasePublisherProvider.name);
   }
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos da interface                               */
+  /******************************************************/
   async publishNamespace(props: PublishProps): Promise<string> {
     const { system, language, namespace, from, to } = props;
 
@@ -41,7 +44,12 @@ export class DatabasePublisherProvider implements PublisherProvider {
 
     return 'Tudo ok';
   }
+  //#endregion
 
+  //#region Metodos privados
+  /******************************************************/
+  /* Metodos privados                                   */
+  /******************************************************/
   private async getToLanguageIdOrCreate(trx: Knex, toEnvId: number, language: string): Promise<number> {
     try {
       const lang = await trx
@@ -119,4 +127,5 @@ export class DatabasePublisherProvider implements PublisherProvider {
       }
     }
   }
+  //#endregion
 }

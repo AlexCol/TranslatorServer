@@ -1,18 +1,21 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { System } from './entities/system.entity';
 import { ensureConnected } from './utils';
 import { SystemProvider } from '@/core/interfaces/SystemProvider';
+import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseSystemProvider implements SystemProvider {
   private readonly logger = new Logger(DatabaseSystemProvider.name);
-  private readonly knex: Knex;
 
-  constructor(knex: Knex) {
-    this.knex = knex;
-    void ensureConnected(this.knex);
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
+    void ensureConnected(this.knex, DatabaseSystemProvider.name);
   }
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos da interface                               */
+  /******************************************************/
   async listSystems(): Promise<string[]> {
     try {
       const rows = await this.knex.select('*').from<System>('systems').orderBy('name', 'asc');
@@ -65,4 +68,5 @@ export class DatabaseSystemProvider implements SystemProvider {
       throw new BadRequestException(`Error inserting base environments for system ID ${systemId}: ${error.message}`);
     }
   }
+  //#endregion
 }

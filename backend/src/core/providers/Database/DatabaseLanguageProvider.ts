@@ -1,18 +1,21 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { ensureConnected, getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { LanguageProvider } from '@/core/interfaces/LanguageProvider';
+import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseLanguageProvider implements LanguageProvider {
   private readonly logger = new Logger(DatabaseLanguageProvider.name);
-  private readonly knex: Knex;
 
-  constructor(knex: Knex) {
-    this.knex = knex;
-    void ensureConnected(this.knex);
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
+    void ensureConnected(this.knex, DatabaseLanguageProvider.name);
   }
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos da interface                               */
+  /******************************************************/
   async listLanguages(system: string, env: string): Promise<string[]> {
     try {
       const systemId = await getSystemId(this.knex, system);
@@ -141,7 +144,9 @@ export class DatabaseLanguageProvider implements LanguageProvider {
       );
     }
   }
+  //#endregion
 
+  //#region Metodos privados
   /******************************************************/
   /* Metodos privados                                   */
   /******************************************************/
@@ -183,4 +188,5 @@ export class DatabaseLanguageProvider implements LanguageProvider {
       throw new BadRequestException(msg);
     }
   }
+  //#endregion
 }

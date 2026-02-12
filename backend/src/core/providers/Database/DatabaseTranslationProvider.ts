@@ -1,4 +1,4 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Translation } from './entities/translation.entity';
 import { ensureConnected, getSystemId } from './utils';
@@ -7,16 +7,19 @@ import { getLanguages } from './utils/getLanguages';
 import { getNamespaceId } from './utils/getNamespaceId';
 import { TranslationProvider } from '@/core/interfaces/TranslationProvider';
 import { CatalogEntry, TranslationStatus } from '@/core/types';
+import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseTranslationProvider implements TranslationProvider {
   private readonly logger = new Logger(DatabaseTranslationProvider.name);
-  private readonly knex: Knex;
 
-  constructor(knex: Knex) {
-    this.knex = knex;
-    void ensureConnected(this.knex);
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
+    void ensureConnected(this.knex, DatabaseTranslationProvider.name);
   }
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos da interface                               */
+  /******************************************************/
   //!carrega o json da tradução
   async loadWithFallBack(entry: CatalogEntry): Promise<Record<string, any>> {
     try {
@@ -225,7 +228,9 @@ export class DatabaseTranslationProvider implements TranslationProvider {
       throw new BadRequestException(`Failed to get translation status: ${error.message}`);
     }
   }
+  //#endregion
 
+  //region Metodos privados
   /******************************************************/
   /* Metodos privados                                   */
   /******************************************************/
@@ -260,4 +265,5 @@ export class DatabaseTranslationProvider implements TranslationProvider {
 
     return row;
   }
+  //endregion
 }

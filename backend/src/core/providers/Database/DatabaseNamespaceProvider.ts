@@ -1,20 +1,23 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { ensureConnected, getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguage } from './utils/getLanguage';
 import { getLanguages } from './utils/getLanguages';
 import { NamespaceProvider } from '@/core/interfaces/NamespaceProvider';
+import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseNamespaceProvider implements NamespaceProvider {
   private readonly logger = new Logger(DatabaseNamespaceProvider.name);
-  private readonly knex: Knex;
 
-  constructor(knex: Knex) {
-    this.knex = knex;
-    void ensureConnected(this.knex);
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
+    void ensureConnected(this.knex, DatabaseNamespaceProvider.name);
   }
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos da interface                               */
+  /******************************************************/
   async listNamespaces(system: string, env: string, language: string): Promise<string[]> {
     try {
       const systemId = await getSystemId(this.knex, system);
@@ -93,4 +96,5 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
       throw new BadRequestException(`Error deleting namespace '${namespace}' for system ${system}: ${error.message}`);
     }
   }
+  //#endregion
 }

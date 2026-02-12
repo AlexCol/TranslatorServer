@@ -1,17 +1,20 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { ensureConnected, getSystemId } from './utils';
 import { EnvironmentProvider } from '@/core/interfaces/EnvironmentProvider';
+import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseEnvironmentProvider implements EnvironmentProvider {
   private readonly logger = new Logger(DatabaseEnvironmentProvider.name);
-  private readonly knex: Knex;
 
-  constructor(knex: Knex) {
-    this.knex = knex;
-    void ensureConnected(this.knex);
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
+    void ensureConnected(this.knex, DatabaseEnvironmentProvider.name);
   }
 
+  //#region Metodos da interface
+  /******************************************************/
+  /* Metodos da interface                               */
+  /******************************************************/
   async listEnvironments(system: string): Promise<string[]> {
     try {
       const systemId = await getSystemId(this.knex, system);
@@ -62,4 +65,5 @@ export class DatabaseEnvironmentProvider implements EnvironmentProvider {
       );
     }
   }
+  //#endregion
 }
