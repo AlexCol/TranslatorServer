@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { buildTranslarionProvider } from './core';
 import { EnvironmentController } from './environment/environment.controller';
 import { EnvironmentService } from './environment/environment.service';
 import { LanguageController } from './language/language.controller';
@@ -12,7 +13,6 @@ import { SystemService } from './system/system.service';
 import { TranslationsController } from './translations/translations.controller';
 import { TranslationsService } from './translations/translations.service';
 import { TranslationsCacheService } from './translations-cache.service';
-import { databaseProviders } from '@/modules/core-translations/core/providers/Database';
 
 const controllers = [
   SystemController,
@@ -34,7 +34,7 @@ const services = [
 
 const exportableServices = [TranslationsCacheService];
 
-const jsonProviders = [...databaseProviders];
+const jsonProviders = [...buildTranslarionProvider()];
 
 @Module({
   imports: [],

@@ -28,13 +28,17 @@ const envConfig = {
   },
 
   translations: {
+    provider: process.env.TRANSLATIONS_PROVIDER || '',
     ttl: parseInt(process.env.TRANSLATIONS_CACHE_TTL || process.env.SESSION_TTL || '604800', 10),
   },
 
-  bunny: {
-    key: process.env.BUNNY_KEY || '',
-    storageName: process.env.BUNNY_STORAGE_NAME || '',
-    translationsPath: process.env.BUNNY_TRANSLATIONS_PATH || '',
+  cnd: {
+    provider: process.env.CND_PROVIDER || '',
+    bunny: {
+      key: process.env.BUNNY_KEY || '',
+      storageName: process.env.BUNNY_STORAGE_NAME || '',
+      translationsPath: process.env.BUNNY_TRANSLATIONS_PATH || '',
+    },
   },
 };
 export default envConfig;

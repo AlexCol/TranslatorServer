@@ -3,8 +3,7 @@ import { CoreTranslationsModule } from '../core-translations/core-translations.m
 import { CdnPublisherController } from './cdn-publisher.controller';
 import { CdnPublisherService } from './cdn-publisher.service';
 import { CdnPublisher } from './interfaces/CdnPublisher';
-import { BunnyStorage } from './providers/bunny/bunny-storage';
-import envConfig from '@/env.config';
+import { buildCdnPublisher } from './providers';
 
 @Module({
   imports: [CoreTranslationsModule],
@@ -13,14 +12,7 @@ import envConfig from '@/env.config';
     CdnPublisherService,
     {
       provide: CdnPublisher,
-      useFactory: () => {
-        const provider = new BunnyStorage(
-          envConfig.bunny.key,
-          envConfig.bunny.storageName,
-          envConfig.bunny.translationsPath,
-        );
-        return provider;
-      },
+      useFactory: () => buildCdnPublisher(),
     },
   ],
 })

@@ -2,7 +2,7 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import envConfig from 'src/env.config';
 
 export default function setCors(app: NestFastifyApplication): void {
-  const isProduction = envConfig.nodeEnv === 'production';
+  const isProduction = envConfig.node.isProd;
   const productionOrigins = envConfig.cors.allowedOrigins
     .split(',')
     .map((origin) => origin.trim())
