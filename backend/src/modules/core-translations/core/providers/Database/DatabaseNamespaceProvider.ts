@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
-import { ensureConnected, getSystemId } from './utils';
+import { getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguage } from './utils/getLanguage';
 import { getLanguages } from './utils/getLanguages';
@@ -10,9 +10,7 @@ import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 export class DatabaseNamespaceProvider implements NamespaceProvider {
   private readonly logger = new Logger(DatabaseNamespaceProvider.name);
 
-  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
-    void ensureConnected(this.knex, DatabaseNamespaceProvider.name);
-  }
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
   //#region Metodos da interface
   /******************************************************/

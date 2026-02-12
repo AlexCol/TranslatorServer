@@ -1,4 +1,3 @@
-export * from './ensureConnected';
 export * from './getEnvironmentId';
 export * from './getLanguage';
 export * from './getLanguages';

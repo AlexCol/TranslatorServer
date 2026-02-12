@@ -1,16 +1,13 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { System } from './entities/system.entity';
-import { ensureConnected } from './utils';
 import { SystemProvider } from '@/modules/core-translations/core/interfaces/SystemProvider';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabaseSystemProvider implements SystemProvider {
   private readonly logger = new Logger(DatabaseSystemProvider.name);
 
-  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {
-    void ensureConnected(this.knex, DatabaseSystemProvider.name);
-  }
+  constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
   //#region Metodos da interface
   /******************************************************/
