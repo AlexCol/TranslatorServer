@@ -2,3 +2,6 @@
 BUNNY_KEY=
 BUNNY_STORAGE_NAME=translation-server
 BUNNY_TRANSLATIONS_PATH=translations
+
+##REDMINE
+REDMINE_URL=

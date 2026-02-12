@@ -5,6 +5,10 @@ dotenv.config({ quiet: true });
 const envConfig = {
   nodeEnv: process.env.NODE_ENV || 'development',
 
+  redmine: {
+    url: process.env.REDMINE_URL || '',
+  },
+
   cors: {
     allowedOrigins: process.env.ALLOWED_ORIGINS || '',
   },
