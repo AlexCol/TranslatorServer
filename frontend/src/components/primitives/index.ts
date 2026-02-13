@@ -12,3 +12,5 @@ export { tsButtonVariants } from './TSButton';
 export { default as TSInput } from './TSInput';
 export { default as TSSelect } from './TSSelect';
 export { TSSelectOption } from './TSSelect';
+export { default as TSLink } from './TSLink';
+export { tsLinkVariants } from './TSLink';

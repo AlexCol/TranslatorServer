@@ -1,7 +1,7 @@
 'use client';
 
 import FuzzyText from '@/components/_reactbits/FuzzyText';
-import { TSBox, TSInput } from '@/components/primitives';
+import { TSBox, TSLink } from '@/components/primitives';
 
 export default function NotFound() {
   return (
@@ -19,8 +19,9 @@ export default function NotFound() {
 
       <TSBox className='py-4'></TSBox>
 
-      <TSInput />
-      {/* <LinkCustom href='/' label='Voltar para a página inicial' /> */}
+      <TSLink to='/' variant={'destructive'}>
+        Voltar para home
+      </TSLink>
     </TSBox>
   );
 }

@@ -126,7 +126,9 @@ function LoggedComponent(states: useLoginType) {
       <TSText>Welcome, !</TSText>
       <TSInput type='text' placeholder='Login' value={login} onChange={(e) => setLogin(e.target.value)} />
       <TSInput type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
-      <TSButton type='submit'>Submit</TSButton>
+      <TSButton type='submit' variant={'default'}>
+        Submit
+      </TSButton>
     </TSForm>
   );
 }
