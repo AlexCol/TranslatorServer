@@ -8,6 +8,10 @@ export class MockAuthProvider extends AuthProvider {
       throw new BadRequestException('Credenciais inválidas');
     }
 
+    if (username !== 'mockuser' || password !== 'mockpassword') {
+      throw new BadRequestException('Credenciais inválidas');
+    }
+
     const loggedUser: LoggedUser = {
       id: 1,
       login: 'mockuser',

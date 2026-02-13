@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AuthenticationService } from './authentication.service';
 import { IsPublic } from './decorators/isPublic';
@@ -57,5 +57,31 @@ export class AuthenticationController {
 
     const response: StringResponseDto = { data: 'Logout successful' };
     return response;
+  }
+
+  /****************************************************************************/
+  /* Tratamentos para sessões                                                 */
+  /****************************************************************************/
+  @ApiDoc({
+    summary: 'Verificação de sessão',
+    description: 'Verifica se a sessão do usuário é válida e retorna os dados da sessão.',
+    errStatus: [401],
+    response: SessionPayload,
+  })
+  @Get('session')
+  @HttpCode(200)
+  async checkSession(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
+    try {
+      const sessionToken = req.cookies['sessionToken'];
+      if (!sessionToken) throw new UnauthorizedException('No session token provided');
+
+      const sessionData = await this.sessionService.getSession(sessionToken);
+      if (!sessionData) throw new UnauthorizedException('Session invalid or expired');
+
+      return sessionData.payload;
+    } catch (error) {
+      res.clearCookie('sessionToken');
+      throw error;
+    }
   }
 }
