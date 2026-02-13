@@ -9,7 +9,15 @@ const __dirname = path.dirname(__filename);
 export default defineConfig([
   {
     files: ['**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
-    ignores: ['.next/**', 'out/**', 'build/**', 'node_modules/**', 'next-env.d.ts', 'src/components/ui/**'],
+    ignores: [
+      '.next/**',
+      'out/**',
+      'build/**',
+      'node_modules/**',
+      'next-env.d.ts',
+      'src/components/ui/**',
+      'src/components/primitives/**',
+    ],
     languageOptions: {
       parser: (await import('@typescript-eslint/parser')).default,
       parserOptions: {
@@ -57,6 +65,15 @@ export default defineConfig([
             order: 'asc',
             caseInsensitive: true,
           },
+        },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "JSXOpeningElement[name.type='JSXIdentifier'][name.name=/^(div|span|p|h1|h2|h3|h4|h5|h6|section|article|main|aside|header|footer|nav|form|label|input|textarea|select|option|button|a|ul|ol|li|table|thead|tbody|tr|th|td)$/]",
+          message:
+            'Nao use tags HTML diretas no app. Use componentes de UI/primitives (ex: Box, Text, Stack, Button, Input, AppLink, Field).',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'off',

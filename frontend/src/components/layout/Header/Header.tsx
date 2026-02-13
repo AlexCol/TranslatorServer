@@ -1,0 +1,44 @@
+import { LogOut } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Link } from 'react-router-dom';
+import { headerStyles } from './header.styles';
+import { TSBox, TSHeading } from '@/components/primitives';
+import { useAuthContext } from '@/contexts/Auth/AuthContext';
+
+function Header() {
+  const { signOut } = useAuthContext();
+  const { setTheme, theme } = useTheme();
+
+  const themeHandle = () => {
+    if (theme === 'dark') {
+      setTheme('light');
+    } else {
+      setTheme('dark');
+    }
+  };
+
+  return (
+    <TSBox className={headerStyles.header}>
+      <Link to='/' className={headerStyles.logoLink}>
+        <TSHeading as='h1'>Logo</TSHeading>
+      </Link>
+
+      <TSBox as={'nav'} className={headerStyles.menuItens}>
+        <Link to={''} className={headerStyles.link}>
+          Opção 1
+        </Link>
+        <Link to={''} className={headerStyles.link}>
+          Opção 2
+        </Link>
+        <TSBox onClick={themeHandle} className={headerStyles.link}>
+          {`${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+        </TSBox>
+        <TSBox onClick={signOut} className={headerStyles.link}>
+          <LogOut className={headerStyles.logoutIcon} />
+        </TSBox>
+      </TSBox>
+    </TSBox>
+  );
+}
+
+export default Header;
