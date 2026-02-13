@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { LoginDto, SessionPayload, StringResponseDto } from '.././models';
+
 import { apiClient } from '../../api-mutator';
 
 export const getAuthentication = () => {
@@ -28,11 +29,21 @@ export const getAuthentication = () => {
   const authenticationControllerLogout = () => {
     return apiClient<StringResponseDto>({ url: `/api/auth/logout`, method: 'POST' });
   };
-  return { authenticationControllerLogin, authenticationControllerLogout };
+  /**
+   * Verifica se a sessão do usuário é válida e retorna os dados da sessão.
+   * @summary Verificação de sessão
+   */
+  const authenticationControllerCheckSession = () => {
+    return apiClient<SessionPayload>({ url: `/api/auth/session`, method: 'GET' });
+  };
+  return { authenticationControllerLogin, authenticationControllerLogout, authenticationControllerCheckSession };
 };
 export type AuthenticationControllerLoginResult = NonNullable<
   Awaited<ReturnType<ReturnType<typeof getAuthentication>['authenticationControllerLogin']>>
 >;
 export type AuthenticationControllerLogoutResult = NonNullable<
   Awaited<ReturnType<ReturnType<typeof getAuthentication>['authenticationControllerLogout']>>
+>;
+export type AuthenticationControllerCheckSessionResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getAuthentication>['authenticationControllerCheckSession']>>
 >;
