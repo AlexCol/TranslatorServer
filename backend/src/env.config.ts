@@ -32,8 +32,8 @@ const envConfig = {
     ttl: parseInt(process.env.TRANSLATIONS_CACHE_TTL || process.env.SESSION_TTL || '604800', 10),
   },
 
-  cnd: {
-    provider: process.env.CND_PROVIDER || '',
+  cdn: {
+    provider: process.env.CDN_PROVIDER || '',
     bunny: {
       key: process.env.BUNNY_KEY || '',
       storageName: process.env.BUNNY_STORAGE_NAME || '',
