@@ -4,8 +4,8 @@ import axios, { AxiosError } from 'axios';
 /*****************************************************************/
 /* Configuração base                                             */
 /*****************************************************************/
-const baseUrl = import.meta.env.VITE_API_URL;
-console.log('API Base URL:', baseUrl);
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'; // Valor padrão para desenvolvimento
+
 const core = axios.create({
   baseURL: baseUrl,
   headers: {

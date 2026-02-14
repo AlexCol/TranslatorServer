@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Login from '@/pages/Login';
+import Login from '@/app/Login';
 
 function NotLoggedRoutes() {
   return (

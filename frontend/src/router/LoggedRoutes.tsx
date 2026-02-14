@@ -1,11 +1,11 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import NotFound from '@/app/_NotFound/not-found';
+import About from '@/app/About';
+import Dashboard from '@/app/DashBoard';
 import Footer from '@/components/layout/Footer/Footer';
 import Header from '@/components/layout/Header/Header';
 import Main from '@/components/layout/Main/Main';
 import TSBox from '@/components/primitives/TSBox';
-import NotFound from '@/pages/_NotFound/not-found';
-import About from '@/pages/About';
-import Dashboard from '@/pages/DashBoard';
 
 function LoggedRoutes() {
   return (
@@ -20,6 +20,7 @@ function LoggedRoutes() {
           <Routes>
             <Route path='/' element={<Dashboard />} />
             <Route path='/about' element={<About />} />
+            <Route path='/login' element={<Navigate to='/' replace />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
         </Main>
