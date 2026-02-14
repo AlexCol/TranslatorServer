@@ -67,7 +67,6 @@ function useLogin() {
     jsonData,
   };
 }
-type useLoginType = ReturnType<typeof useLogin>;
 
 function Login() {
   const states = useLogin();
@@ -84,7 +83,7 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <BsButton type='button' buttonProps={{ onClick: () => {} }} variants={{ variant: 'default' }}>
+        <BsButton type='button' buttonProps={{ onClick: () => {} }} variants={{ variant: 'secondary' }}>
           Submit
         </BsButton>
       </TSForm>

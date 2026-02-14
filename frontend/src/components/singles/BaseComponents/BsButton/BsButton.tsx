@@ -5,9 +5,11 @@ import { cn } from '@/lib/utils';
 
 function BsButton(props: BsButtonProps) {
   const { buttonProps, variants, asChild, children, type } = props;
+  const variant = variants?.variant ?? 'default';
+
   return (
     <Button
-      className={cn(bsButtonStyles.customTC, buttonProps?.className)}
+      className={cn(bsButtonStyles.customTC(variant), buttonProps?.className)}
       type={type}
       {...variants}
       {...buttonProps}
