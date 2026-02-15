@@ -1,11 +1,11 @@
 import React from 'react';
-import { TSBox } from '@/components/primitives';
+import { BsBox } from '@/components/singles/BaseComponents';
 
 function Main({ children }: { children: React.ReactNode }) {
   return (
-    <TSBox as={'main'} className={mainTailwindClass}>
+    <BsBox as={'main'} className={mainTailwindClass}>
       {children}
-    </TSBox>
+    </BsBox>
   );
 }
 

@@ -1,7 +1,7 @@
-import { TSBox } from '@/components/primitives';
+import { BsBox } from '@/components/singles/BaseComponents';
 
 function Dashboard() {
-  return <TSBox>Dashboard</TSBox>;
+  return <BsBox>Dashboard</BsBox>;
 }
 
 export default Dashboard;

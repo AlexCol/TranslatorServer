@@ -37,8 +37,10 @@ export const bsButtonStyles = {
     disabled:cursor-not-allowed
     disabled:opacity-50
     transition-colors
-    hover:ring-1
-    hover:ring-current
+    duration-300
+    border-1
+    border-transparent
+    hover:border-current
     ${invertedByVariant[variant]}
   `,
 };

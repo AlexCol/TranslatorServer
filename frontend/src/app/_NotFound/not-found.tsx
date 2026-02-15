@@ -1,28 +1,29 @@
 'use client';
 
 import FuzzyText from '@/components/_reactbits/FuzzyText';
-import { TSBox, TSLink } from '@/components/primitives';
+import { TSLink } from '@/components/primitives';
+import { BsBox } from '@/components/singles/BaseComponents';
 
 export default function NotFound() {
   return (
     //pagina de layout não se aplica ao arquivo de NotFound
-    <TSBox className={styles.notFound}>
+    <BsBox className={styles.notFound}>
       <FuzzyText baseIntensity={0.2} hoverIntensity={0.5} enableHover={true} fontWeight='bold'>
         404
       </FuzzyText>
 
-      <TSBox className='py-4'></TSBox>
+      <BsBox className='py-4'></BsBox>
 
       <FuzzyText baseIntensity={0.2} hoverIntensity={0.5} enableHover={true} fontSize={40} fontWeight='bold'>
         Página não encontrada!
       </FuzzyText>
 
-      <TSBox className='py-4'></TSBox>
+      <BsBox className='py-4'></BsBox>
 
       <TSLink to='/' variant={'destructive'}>
         Voltar para home
       </TSLink>
-    </TSBox>
+    </BsBox>
   );
 }
 

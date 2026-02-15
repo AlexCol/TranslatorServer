@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { TSForm, TSInput, TSText } from '@/components/primitives';
-import TSBox from '@/components/primitives/TSBox';
-import BsButton from '@/components/singles/BaseComponents/BsButton/BsButton';
+import { BsBox, BsButton } from '@/components/singles/BaseComponents';
 import { useAuthContext } from '@/contexts/Auth/AuthContext';
 import { setRememberMe } from '@/services/api';
 import { getTranslations } from '@/services/generated/translations/translations';
@@ -73,7 +72,7 @@ function Login() {
   const { login, setLogin, password, setPassword, handleSubmit } = states;
 
   return (
-    <TSBox className='flex min-h-screen flex-col items-center justify-center'>
+    <BsBox className='flex min-h-screen flex-col items-center justify-center'>
       <TSForm onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <TSText>Welcome, !</TSText>
         <TSInput type='text' placeholder='Login' value={login} onChange={(e) => setLogin(e.target.value)} />
@@ -83,11 +82,12 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <BsButton type='button' buttonProps={{ onClick: () => {} }} variants={{ variant: 'secondary' }}>
+
+        <BsButton type='submit' variants={{ variant: 'default' }}>
           Submit
         </BsButton>
       </TSForm>
-    </TSBox>
+    </BsBox>
   );
 }
 

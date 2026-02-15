@@ -1,7 +1,7 @@
-import { TSBox } from '@/components/primitives';
+import { BsBox } from '@/components/singles/BaseComponents';
 
 function About() {
-  return <TSBox>About</TSBox>;
+  return <BsBox>About</BsBox>;
 }
 
 export default About;

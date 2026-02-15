@@ -1,12 +1,13 @@
-import { TSBox, TSText } from '@/components/primitives';
+import { TSText } from '@/components/primitives';
+import { BsBox } from '@/components/singles/BaseComponents';
 
 function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <TSBox as={'footer'} className={footerTailwindClass}>
+    <BsBox as={'footer'} className={footerTailwindClass}>
       <TSText className='text-sm'>© {currentYear} Sistema de Chamados.</TSText>
-    </TSBox>
+    </BsBox>
   );
 }
 
