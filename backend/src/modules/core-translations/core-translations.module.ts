@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { buildTranslarionProvider } from './core';
+import { DiagnosticController } from './diagnostic/diagnostic.controller';
+import { DiagnosticService } from './diagnostic/diagnostic.service';
 import { EnvironmentController } from './environment/environment.controller';
 import { EnvironmentService } from './environment/environment.service';
 import { LanguageController } from './language/language.controller';
@@ -19,6 +21,7 @@ const controllers = [
   EnvironmentController,
   LanguageController,
   NamespaceController,
+  DiagnosticController,
   TranslationsController,
   PublisherController,
 ];
@@ -28,6 +31,7 @@ const services = [
   EnvironmentService,
   LanguageService,
   NamespaceService,
+  DiagnosticService,
   TranslationsService,
   PublisherService,
 ];
