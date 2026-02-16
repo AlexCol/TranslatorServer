@@ -1,11 +1,11 @@
-import type { SystemData } from '../../types';
 import { SystemCard } from './components/SystemCard';
 import pageSystemsStyles from './page-systems.styles';
 import { BsBox } from '@/components/singles/BaseComponents';
 import BsHeading from '@/components/singles/BaseComponents/BsHeading/BsHeading';
+import type { SystemDiagnostic } from '@/services/generated/models';
 
 type PageSystemsProps = {
-  systems: SystemData[];
+  systems: SystemDiagnostic[];
 };
 
 function PageSystems({ systems }: PageSystemsProps) {

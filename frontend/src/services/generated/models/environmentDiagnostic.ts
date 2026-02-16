@@ -5,13 +5,12 @@
  * API para gerenciamento de traduções.
  * OpenAPI spec version: 1.0
  */
-import type { EnvironmentDiagnosticBaseLanguage } from './environmentDiagnosticBaseLanguage';
 import type { LanguageDiagnostic } from './languageDiagnostic';
 
 export interface EnvironmentDiagnostic {
   environment: string;
   /** @nullable */
-  baseLanguage: EnvironmentDiagnosticBaseLanguage;
+  baseLanguage: string | null;
   totalTerms: number;
   translatedTerms: number;
   missingTerms: number;

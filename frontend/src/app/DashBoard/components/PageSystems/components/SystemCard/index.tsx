@@ -1,15 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDownIcon, ServerIcon } from 'lucide-react';
 import { useState } from 'react';
-import type { SystemData } from '../../../../types';
 import { EnvironmentSection } from '../EnvironmentSection';
 import systemCardStyles from './system-card.styles';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
 import { BsBox, BsButton, BsText } from '@/components/singles/BaseComponents';
 import BsHeading from '@/components/singles/BaseComponents/BsHeading/BsHeading';
+import type { SystemDiagnostic } from '@/services/generated/models';
 
 interface SystemCardProps {
-  system: SystemData;
+  system: SystemDiagnostic;
   index: number;
 }
 export function SystemCard({ system, index }: SystemCardProps) {
@@ -92,22 +92,10 @@ export function SystemCard({ system, index }: SystemCardProps) {
       <AnimatePresence>
         {expanded && (
           <motion.div
-            initial={{
-              height: 0,
-              opacity: 0,
-            }}
-            animate={{
-              height: 'auto',
-              opacity: 1,
-            }}
-            exit={{
-              height: 0,
-              opacity: 0,
-            }}
-            transition={{
-              duration: 0.25,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
             className={systemCardStyles.expandedMotionTC}
           >
             <BsBox className={systemCardStyles.expandedContentTC}>

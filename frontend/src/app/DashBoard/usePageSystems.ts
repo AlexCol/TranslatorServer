@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { fetchMockData } from './fetchMockData';
-import type { TranslationOverview } from './types';
+import { getDiagnostic } from '@/services/generated/diagnostic/diagnostic';
+import type { DiagnosticOverview } from '@/services/generated/models';
 
 export default function useDashboard() {
-  const [data, setData] = useState<TranslationOverview | null>(null);
+  const [data, setData] = useState<DiagnosticOverview | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchMockData();
+        const response = await getDiagnostic().diagnosticControllerGetOverview();
         setData(response);
       } catch {
-        toast.error('Failed to fetch translation overview data. Please try again later.');
+        toast.error('Failed to fetch diagnostic overview data. Please try again later.');
       }
     };
     void fetchData();

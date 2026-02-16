@@ -2,12 +2,12 @@ import { motion } from 'framer-motion';
 import { LanguageRow } from './components/LanguageRow';
 import environmentSectionStyles from './environment-section.styles';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
-import type { EnvironmentData } from '@/app/Dashboard/types';
 import { BsBox, BsText } from '@/components/singles/BaseComponents';
 import { cn } from '@/lib/utils';
+import type { EnvironmentDiagnostic } from '@/services/generated/models';
 
 interface EnvironmentSectionProps {
-  environment: EnvironmentData;
+  environment: EnvironmentDiagnostic;
   index: number;
 }
 
@@ -16,21 +16,13 @@ export function EnvironmentSection({ environment, index }: EnvironmentSectionPro
     environment.totalTerms > 0 ? Math.round((environment.translatedTerms / environment.totalTerms) * 100) : 0;
   const dotColor =
     environment.environment === 'prod' ? environmentSectionStyles.dotProdTC : environmentSectionStyles.dotNonProdTC;
+  const baseLanguageLabel = typeof environment.baseLanguage === 'string' ? environment.baseLanguage : '-';
 
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        y: 6,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        duration: 0.2,
-        delay: index * 0.06,
-      }}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, delay: index * 0.06 }}
       className={environmentSectionStyles.containerTC}
     >
       <BsBox className={environmentSectionStyles.headerTC}>
@@ -39,7 +31,7 @@ export function EnvironmentSection({ environment, index }: EnvironmentSectionPro
           {environment.environment}
         </BsText>
         <BsText as='span' className={environmentSectionStyles.badgeTC}>
-          base: {environment.baseLanguage}
+          base: {baseLanguageLabel}
         </BsText>
 
         <BsBox className={environmentSectionStyles.summaryRowTC}>

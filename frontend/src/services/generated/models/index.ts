@@ -13,7 +13,6 @@ export * from './createTranslationDto';
 export * from './diagnosticOverview';
 export * from './diagnosticOverviewTotals';
 export * from './environmentDiagnostic';
-export * from './environmentDiagnosticBaseLanguage';
 export * from './environmentDto';
 export * from './errorResponseDto';
 export * from './languageDiagnostic';

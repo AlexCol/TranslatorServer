@@ -1,7 +1,7 @@
+import PageHeader from './components/PageHeader';
+import PageSummary from './components/PageSummary';
+import PageSystems from './components/PageSystems';
 import dashboardStyles from './dashboard.styles';
-import PageHeader from './PageParts/PageHeader';
-import PageSummary from './PageParts/PageSummary';
-import PageSystems from './PageParts/PageSystems';
 import useDashboard from './usePageSystems';
 import { BsBox } from '@/components/singles/BaseComponents';
 import LoadingTailwind from '@/components/singles/LoadingTailwind';

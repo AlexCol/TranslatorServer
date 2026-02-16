@@ -9,5 +9,5 @@
 export interface CreateKeyDto {
   system: string;
   namespace: string;
-  key: string;
+  keys: string[];
 }

@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { ArrayStringResponseDto, EnvironmentDto } from '.././models';
+
 import { apiClient } from '../../api-mutator';
 
 export const getEnvironment = () => {

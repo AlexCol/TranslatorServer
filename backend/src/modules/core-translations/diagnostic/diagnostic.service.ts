@@ -56,7 +56,27 @@ export class DiagnosticService {
         }
 
         const baseLanguageFromProvider = await this.languagesService.getBaseLanguage(system, environment);
-        const baseLanguage = baseLanguageFromProvider ?? languages[0];
+        const baseLanguage = baseLanguageFromProvider ?? undefined;
+        if (!baseLanguage) {
+          environmentNodes.push({
+            environment,
+            baseLanguage: null,
+            totalTerms: 0,
+            translatedTerms: 0,
+            missingTerms: 0,
+            translatedPercentage: 0,
+            languages: languages.map((language) => ({
+              language,
+              isBase: false,
+              totalTerms: 0,
+              translatedTerms: 0,
+              missingTerms: 0,
+              translatedPercentage: 0,
+              namespaces: [],
+            })),
+          });
+          continue;
+        }
 
         const baseNamespaces = await this.namespacesService.listNamespaces(system, environment, baseLanguage);
         baseNamespaces.sort((a, b) => a.localeCompare(b));
@@ -135,8 +155,7 @@ export class DiagnosticService {
     const totalTerms = namespaces.reduce((sum, item) => sum + item.totalTerms, 0);
     const translatedTerms = namespaces.reduce((sum, item) => sum + item.translatedTerms, 0);
     const missingTerms = namespaces.reduce((sum, item) => sum + item.missingTerms, 0);
-    const translatedPercentage =
-      isBase || totalTerms === 0 ? 0 : Math.round((translatedTerms / totalTerms) * 100);
+    const translatedPercentage = isBase || totalTerms === 0 ? 0 : Math.round((translatedTerms / totalTerms) * 100);
 
     return {
       language,

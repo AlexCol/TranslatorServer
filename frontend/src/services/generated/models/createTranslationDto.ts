@@ -10,6 +10,5 @@ export interface CreateTranslationDto {
   system: string;
   namespace: string;
   language: string;
-  key: string;
-  value: string;
+  keys: string[];
 }
