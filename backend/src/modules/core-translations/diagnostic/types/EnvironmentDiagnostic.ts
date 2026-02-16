@@ -5,7 +5,7 @@ export class EnvironmentDiagnostic {
   @ApiProperty()
   environment: string;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ type: String, nullable: true })
   baseLanguage: string | null;
 
   @ApiProperty()
