@@ -1,26 +1,34 @@
 'use client';
 
-import FuzzyText from '@/components/_reactbits/FuzzyText';
+import { useTheme } from 'next-themes';
+import FuzzyText, { type FuzzyTextProps } from '@/components/_reactbits/FuzzyText';
 import { TSLink } from '@/components/primitives';
 import { BsBox } from '@/components/singles/BaseComponents';
 
 export default function NotFound() {
+  const { theme } = useTheme();
+  const props: FuzzyTextProps = {
+    color: theme === 'dark' ? '#fff' : '#000',
+    baseIntensity: 0.2,
+    hoverIntensity: 0.5,
+    enableHover: true,
+    fontWeight: 'bold',
+    children: undefined,
+  };
   return (
     //pagina de layout não se aplica ao arquivo de NotFound
     <BsBox className={styles.notFound}>
-      <FuzzyText baseIntensity={0.2} hoverIntensity={0.5} enableHover={true} fontWeight='bold'>
-        404
-      </FuzzyText>
+      <FuzzyText {...props}>404</FuzzyText>
 
       <BsBox className='py-4'></BsBox>
 
-      <FuzzyText baseIntensity={0.2} hoverIntensity={0.5} enableHover={true} fontSize={40} fontWeight='bold'>
+      <FuzzyText {...props} fontSize={40}>
         Página não encontrada!
       </FuzzyText>
 
       <BsBox className='py-4'></BsBox>
 
-      <TSLink to='/' variant={'destructive'}>
+      <TSLink to='/' variant={'destructive'} className={styles.link}>
         Voltar para home
       </TSLink>
     </BsBox>
@@ -37,22 +45,12 @@ const notFoundTailwindClass = `
   justify-center
 `;
 
-const titleTailwindClass = `
-  text-6xl font-bold mb-4
-`;
-const subtitleTailwindClass = `
-  text-2xl mb-8
-`;
-
 const linkTailwindClass = `
   text-primary
   transition-colors duration-300
-  underline
 `;
 
 const styles = {
   notFound: notFoundTailwindClass,
-  title: titleTailwindClass,
-  subtitle: subtitleTailwindClass,
   link: linkTailwindClass,
 };

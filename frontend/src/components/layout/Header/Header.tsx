@@ -2,7 +2,6 @@ import { LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Link } from 'react-router-dom';
 import { headerStyles } from './header.styles';
-import { TSHeading } from '@/components/primitives';
 import { BsBox } from '@/components/singles/BaseComponents';
 import { useAuthContext } from '@/contexts/Auth/AuthContext';
 
@@ -21,16 +20,12 @@ function Header() {
   return (
     <BsBox className={headerStyles.header}>
       <Link to='/' className={headerStyles.logoLink}>
-        <TSHeading as='h1'>Logo</TSHeading>
+        <BsBox className={headerStyles.logoWrapTC}>
+          <img src='/main-logo.png' alt='Main logo' className={headerStyles.logoTC} />
+        </BsBox>
       </Link>
 
       <BsBox as={'nav'} className={headerStyles.menuItens}>
-        <Link to={''} className={headerStyles.link}>
-          Opção 1
-        </Link>
-        <Link to={''} className={headerStyles.link}>
-          Opção 2
-        </Link>
         <BsBox elementProps={{ onClick: themeHandle }} className={headerStyles.link}>
           {theme === 'dark' ? <Sun /> : <Moon />}
         </BsBox>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-interface FuzzyTextProps {
+export interface FuzzyTextProps {
   children: React.ReactNode;
   fontSize?: number | string;
   fontWeight?: string | number;
