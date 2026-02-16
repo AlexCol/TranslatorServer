@@ -1,7 +1,6 @@
 import { dashboardStyles } from './dashboard.styles';
 import { useDashboard } from './useDashboard';
-import { BsBox, BsButton } from '@/components/singles/BaseComponents';
-import { Modal } from '@/components/singles/Modal/Modal';
+import { BsBox, BsButton, BsInput } from '@/components/singles/BaseComponents';
 import type {
   EnvironmentDiagnostic,
   LanguageDiagnostic,
@@ -21,7 +20,15 @@ function Dashboard() {
     selectItem,
     goToLevel,
     selectedNamespace,
-    closeNamespaceModal,
+    namespaceRows,
+    namespaceLoading,
+    namespaceError,
+    namespaceSaving,
+    namespaceSaveInfo,
+    changedNamespaceRows,
+    updateNamespaceValue,
+    saveNamespaceChanges,
+    closeNamespaceEditor,
   } = useDashboard();
 
   const titleByLevel = {
@@ -87,32 +94,85 @@ function Dashboard() {
               key={getItemKey(item, currentLevel)}
               item={item}
               level={currentLevel}
-              onClick={() => selectItem(item, currentLevel)}
+              onClick={() => void selectItem(item, currentLevel)}
             />
           ))}
         </BsBox>
       )}
 
-      <Modal isOpen={!!selectedNamespace} onClose={closeNamespaceModal}>
-        <BsBox className={dashboardStyles.modalCardTC}>
-          <BsBox className={dashboardStyles.modalTitleTC}>{selectedNamespace?.namespace}</BsBox>
-          <BsBox
-            className={dashboardStyles.modalMetaTC}
-          >{`Total de termos: ${selectedNamespace?.totalTerms ?? 0}`}</BsBox>
-          <BsBox
-            className={dashboardStyles.modalMetaTC}
-          >{`Traduzidos: ${selectedNamespace?.translatedTerms ?? 0}`}</BsBox>
-          <BsBox className={dashboardStyles.modalMetaTC}>{`Faltando: ${selectedNamespace?.missingTerms ?? 0}`}</BsBox>
-          <BsBox
-            className={dashboardStyles.modalMetaTC}
-          >{`Percentual: ${selectedNamespace?.translatedPercentage ?? 0}%`}</BsBox>
-          <BsBox className={dashboardStyles.modalActionsTC}>
-            <BsButton type='button' variants={{ variant: 'default' }} onClick={closeNamespaceModal}>
-              Fechar
-            </BsButton>
+      {selectedNamespace && (
+        <BsBox className={dashboardStyles.namespacePanelTC}>
+          <BsBox className={dashboardStyles.namespaceHeaderTC}>
+            <BsBox className={dashboardStyles.namespaceTitleTC}>{`Namespace: ${selectedNamespace.namespace}`}</BsBox>
+            <BsBox className={dashboardStyles.namespaceSubtitleTC}>
+              Chave / Valor Considerado (fallback) / Traducao Propria (clean)
+            </BsBox>
           </BsBox>
+
+          <BsBox className={dashboardStyles.namespaceToolbarTC}>
+            <BsBox className={dashboardStyles.namespaceChangedTC}>
+              {`${changedNamespaceRows.length} alteracao(oes) pendente(s)`}
+            </BsBox>
+            <BsBox className='flex gap-2'>
+              <BsButton type='button' variants={{ variant: 'outline', size: 'sm' }} onClick={closeNamespaceEditor}>
+                Fechar
+              </BsButton>
+              <BsButton
+                type='button'
+                variants={{ variant: 'default', size: 'sm' }}
+                onClick={saveNamespaceChanges}
+                buttonProps={{ disabled: changedNamespaceRows.length === 0 || namespaceSaving || namespaceLoading }}
+              >
+                {namespaceSaving ? 'Salvando...' : 'Salvar alteracoes'}
+              </BsButton>
+            </BsBox>
+          </BsBox>
+
+          {namespaceSaveInfo && <BsBox className={dashboardStyles.saveInfoTC}>{namespaceSaveInfo}</BsBox>}
+
+          {namespaceError && <BsBox className={dashboardStyles.errorTC}>{namespaceError}</BsBox>}
+
+          {namespaceLoading ? (
+            <BsBox className={dashboardStyles.emptyTC}>Carregando dados do namespace...</BsBox>
+          ) : namespaceRows.length === 0 ? (
+            <BsBox className={dashboardStyles.emptyTC}>Sem chaves para este namespace.</BsBox>
+          ) : (
+            <BsBox className={dashboardStyles.tableWrapTC}>
+              <table className={dashboardStyles.tableTC}>
+                <thead>
+                  <tr className={dashboardStyles.tableHeadRowTC}>
+                    <th className={dashboardStyles.tableHeadCellTC}>Chave</th>
+                    <th className={dashboardStyles.tableHeadCellTC}>Valor Considerado</th>
+                    <th className={dashboardStyles.tableHeadCellTC}>Traducao Propria</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {namespaceRows.map((row) => {
+                    const isEmpty = row.ownValue.trim().length === 0;
+                    return (
+                      <tr key={row.key} className={dashboardStyles.tableRowTC}>
+                        <td className={dashboardStyles.tableCellTC}>
+                          <BsBox className={dashboardStyles.keyLabelTC}>{row.key}</BsBox>
+                        </td>
+                        <td className={dashboardStyles.tableCellTC}>
+                          <BsBox className={dashboardStyles.valueLabelTC}>{row.consideredValue}</BsBox>
+                        </td>
+                        <td className={dashboardStyles.tableCellTC}>
+                          <BsInput
+                            value={row.ownValue}
+                            className={`${dashboardStyles.inputTC} ${isEmpty ? dashboardStyles.inputInvalidTC : ''}`}
+                            onChange={(e) => updateNamespaceValue(row.key, e.target.value)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </BsBox>
+          )}
         </BsBox>
-      </Modal>
+      )}
     </BsBox>
   );
 }

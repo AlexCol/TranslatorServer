@@ -7,8 +7,16 @@ import type {
   NamespaceDiagnostic,
   SystemDiagnostic,
 } from '@/services/generated/models';
+import { getTranslations } from '@/services/generated/translations/translations';
 
 type DashboardLevel = 'systems' | 'environments' | 'languages' | 'namespaces';
+
+type NamespaceRow = {
+  key: string;
+  consideredValue: string;
+  ownValue: string;
+  originalOwnValue: string;
+};
 
 export function useDashboard() {
   const [overview, setOverview] = useState<DiagnosticOverview | null>(null);
@@ -19,6 +27,12 @@ export function useDashboard() {
   const [selectedEnvironment, setSelectedEnvironment] = useState<EnvironmentDiagnostic | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageDiagnostic | null>(null);
   const [selectedNamespace, setSelectedNamespace] = useState<NamespaceDiagnostic | null>(null);
+
+  const [namespaceRows, setNamespaceRows] = useState<NamespaceRow[]>([]);
+  const [namespaceLoading, setNamespaceLoading] = useState(false);
+  const [namespaceError, setNamespaceError] = useState<string | null>(null);
+  const [namespaceSaving, setNamespaceSaving] = useState(false);
+  const [namespaceSaveInfo, setNamespaceSaveInfo] = useState<string | null>(null);
 
   const fetchOverview = async () => {
     setLoading(true);
@@ -61,7 +75,12 @@ export function useDashboard() {
     return list;
   }, [selectedSystem, selectedEnvironment, selectedLanguage]);
 
-  const selectItem = (
+  const changedNamespaceRows = useMemo(
+    () => namespaceRows.filter((row) => row.ownValue !== row.originalOwnValue),
+    [namespaceRows],
+  );
+
+  const selectItem = async (
     item: SystemDiagnostic | EnvironmentDiagnostic | LanguageDiagnostic | NamespaceDiagnostic,
     level: DashboardLevel,
   ) => {
@@ -69,21 +88,26 @@ export function useDashboard() {
       setSelectedSystem(item as SystemDiagnostic);
       setSelectedEnvironment(null);
       setSelectedLanguage(null);
+      clearNamespaceEditor();
       return;
     }
 
     if (level === 'environments') {
       setSelectedEnvironment(item as EnvironmentDiagnostic);
       setSelectedLanguage(null);
+      clearNamespaceEditor();
       return;
     }
 
     if (level === 'languages') {
       setSelectedLanguage(item as LanguageDiagnostic);
+      clearNamespaceEditor();
       return;
     }
 
-    setSelectedNamespace(item as NamespaceDiagnostic);
+    const namespace = item as NamespaceDiagnostic;
+    setSelectedNamespace(namespace);
+    await loadNamespaceRows(namespace.namespace);
   };
 
   const goToLevel = (level: DashboardLevel) => {
@@ -91,22 +115,127 @@ export function useDashboard() {
       setSelectedSystem(null);
       setSelectedEnvironment(null);
       setSelectedLanguage(null);
+      clearNamespaceEditor();
       return;
     }
 
     if (level === 'environments') {
       setSelectedEnvironment(null);
       setSelectedLanguage(null);
+      clearNamespaceEditor();
       return;
     }
 
     if (level === 'languages') {
       setSelectedLanguage(null);
+      clearNamespaceEditor();
       return;
     }
   };
 
-  const closeNamespaceModal = () => setSelectedNamespace(null);
+  const updateNamespaceValue = (key: string, value: string) => {
+    setNamespaceRows((prev) => prev.map((row) => (row.key === key ? { ...row, ownValue: value } : row)));
+    setNamespaceSaveInfo(null);
+  };
+
+  const saveNamespaceChanges = async () => {
+    if (!selectedSystem || !selectedLanguage || !selectedNamespace || changedNamespaceRows.length === 0) {
+      return;
+    }
+
+    setNamespaceSaving(true);
+    setNamespaceError(null);
+    setNamespaceSaveInfo(null);
+
+    try {
+      await Promise.all(
+        changedNamespaceRows.map((row) =>
+          getTranslations().translationsControllerCreateTranslation({
+            system: selectedSystem.system,
+            language: selectedLanguage.language,
+            namespace: selectedNamespace.namespace,
+            key: row.key,
+            value: row.ownValue,
+          }),
+        ),
+      );
+
+      setNamespaceRows((prev) => prev.map((row) => ({ ...row, originalOwnValue: row.ownValue })));
+      setNamespaceSaveInfo(`${changedNamespaceRows.length} alteracao(oes) salvas com sucesso.`);
+      await fetchOverview();
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Falha ao salvar traducoes';
+      setNamespaceError(message);
+    } finally {
+      setNamespaceSaving(false);
+    }
+  };
+
+  const closeNamespaceEditor = () => {
+    clearNamespaceEditor();
+  };
+
+  const loadNamespaceRows = async (namespace: string) => {
+    if (!selectedSystem || !selectedEnvironment || !selectedLanguage) {
+      return;
+    }
+
+    setNamespaceLoading(true);
+    setNamespaceError(null);
+    setNamespaceSaveInfo(null);
+    setNamespaceRows([]);
+
+    try {
+      const [withFallback, clean] = await Promise.all([
+        getTranslations().translationsControllerLoadWithFallBack(
+          selectedSystem.system,
+          selectedEnvironment.environment,
+          selectedLanguage.language,
+          namespace,
+        ),
+        getTranslations().translationsControllerLoadWithoutFallBack(
+          selectedSystem.system,
+          selectedEnvironment.environment,
+          selectedLanguage.language,
+          namespace,
+        ),
+      ]);
+
+      const fallbackMap = ensureRecord(withFallback);
+      const cleanMap = ensureRecord(clean);
+      const allKeys = Array.from(new Set([...Object.keys(fallbackMap), ...Object.keys(cleanMap)])).sort((a, b) =>
+        a.localeCompare(b),
+      );
+
+      const rows = allKeys.map((key) => {
+        const ownRaw = cleanMap[key];
+        const ownValue = ownRaw === null || ownRaw === undefined ? '' : String(ownRaw);
+
+        return {
+          key,
+          consideredValue: toDisplayValue(fallbackMap[key]),
+          ownValue,
+          originalOwnValue: ownValue,
+        } satisfies NamespaceRow;
+      });
+
+      setNamespaceRows(rows);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Falha ao carregar dados do namespace';
+      setNamespaceError(message);
+    } finally {
+      setNamespaceLoading(false);
+    }
+  };
+
+  const clearNamespaceEditor = () => {
+    setSelectedNamespace(null);
+    setNamespaceRows([]);
+    setNamespaceError(null);
+    setNamespaceSaveInfo(null);
+    setNamespaceSaving(false);
+    setNamespaceLoading(false);
+  };
 
   return {
     overview,
@@ -119,6 +248,27 @@ export function useDashboard() {
     selectItem,
     goToLevel,
     selectedNamespace,
-    closeNamespaceModal,
+    namespaceRows,
+    namespaceLoading,
+    namespaceError,
+    namespaceSaving,
+    namespaceSaveInfo,
+    changedNamespaceRows,
+    updateNamespaceValue,
+    saveNamespaceChanges,
+    closeNamespaceEditor,
   };
+}
+
+function ensureRecord(value: unknown): Record<string, unknown> {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+  return {};
+}
+
+function toDisplayValue(value: unknown): string {
+  if (value === null || value === undefined) return '-';
+  if (typeof value === 'string') return value;
+  return JSON.stringify(value);
 }

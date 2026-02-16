@@ -203,6 +203,100 @@ const dashboardStyles = {
     flex
     justify-end
   `,
+  namespacePanelTC: `
+    mt-6
+    rounded-xl
+    border
+    border-border
+    bg-card
+    p-4
+    md:p-5
+  `,
+  namespaceHeaderTC: `
+    flex
+    flex-col
+    gap-1
+    mb-4
+  `,
+  namespaceTitleTC: `
+    text-lg
+    font-semibold
+    text-card-foreground
+  `,
+  namespaceSubtitleTC: `
+    text-sm
+    text-muted-foreground
+  `,
+  namespaceToolbarTC: `
+    mb-4
+    flex
+    flex-wrap
+    items-center
+    justify-between
+    gap-2
+  `,
+  namespaceChangedTC: `
+    text-sm
+    text-muted-foreground
+  `,
+  tableWrapTC: `
+    w-full
+    overflow-x-auto
+    rounded-lg
+    border
+    border-border
+  `,
+  tableTC: `
+    w-full
+    min-w-[900px]
+    border-collapse
+  `,
+  tableHeadRowTC: `
+    bg-muted/60
+  `,
+  tableHeadCellTC: `
+    text-left
+    text-xs
+    uppercase
+    tracking-wide
+    text-muted-foreground
+    p-3
+    border-b
+    border-border
+  `,
+  tableRowTC: `
+    border-b
+    border-border
+    align-top
+  `,
+  tableCellTC: `
+    p-3
+    text-sm
+    text-card-foreground
+  `,
+  keyLabelTC: `
+    font-medium
+    text-foreground
+    break-all
+  `,
+  valueLabelTC: `
+    text-muted-foreground
+    whitespace-pre-wrap
+    break-words
+  `,
+  inputTC: `
+    w-full
+  `,
+  inputInvalidTC: `
+    border-destructive
+    focus-visible:border-destructive
+    focus-visible:ring-destructive/40
+    bg-destructive/5
+  `,
+  saveInfoTC: `
+    text-sm
+    text-primary
+  `,
 };
 
 export { dashboardStyles };
