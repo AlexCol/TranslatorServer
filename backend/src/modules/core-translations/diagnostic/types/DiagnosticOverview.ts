@@ -1,15 +1,36 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { SystemDiagnostic } from './SystemDiagnostic';
 
-export type DiagnosticOverview = {
-  totals: {
-    systems: number;
-    environments: number;
-    languages: number;
-    namespaces: number;
-    totalTerms: number;
-    translatedTerms: number;
-    missingTerms: number;
-    translatedPercentage: number;
-  };
+export class DiagnosticOverviewTotals {
+  @ApiProperty()
+  systems: number;
+
+  @ApiProperty()
+  environments: number;
+
+  @ApiProperty()
+  languages: number;
+
+  @ApiProperty()
+  namespaces: number;
+
+  @ApiProperty()
+  totalTerms: number;
+
+  @ApiProperty()
+  translatedTerms: number;
+
+  @ApiProperty()
+  missingTerms: number;
+
+  @ApiProperty()
+  translatedPercentage: number;
+}
+
+export class DiagnosticOverview {
+  @ApiProperty({ type: () => DiagnosticOverviewTotals })
+  totals: DiagnosticOverviewTotals;
+
+  @ApiProperty({ type: () => SystemDiagnostic, isArray: true })
   systems: SystemDiagnostic[];
-};
+}
