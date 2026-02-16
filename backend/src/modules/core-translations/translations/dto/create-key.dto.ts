@@ -18,7 +18,7 @@ export class CreateKeyDto {
   namespace: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  key: string;
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  keys: string[];
 }

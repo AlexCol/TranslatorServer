@@ -94,7 +94,8 @@ export class TranslationsController {
   })
   @Post('key')
   async createNewKey(@Body() body: CreateKeyDto) {
-    return await this.systemService.createKey(body.system, body.namespace, body.key, body.key);
+    const keys = body.keys.map((key) => ({ key, value: key }));
+    return await this.systemService.createKey(body.system, body.namespace, keys);
   }
 
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -107,7 +108,7 @@ export class TranslationsController {
   })
   @Post('translation')
   async createTranslation(@Body() body: CreateTranslationDto) {
-    return await this.systemService.createTranslation(body.system, body.language, body.namespace, body.key, body.value);
+    return await this.systemService.createTranslation(body.system, body.language, body.namespace, body.keys);
   }
 
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -121,7 +122,7 @@ export class TranslationsController {
   @HttpCode(200)
   @Patch('translation')
   async updateTranslation(@Body() body: CreateTranslationDto) {
-    return await this.systemService.updateKey(body.system, body.language, body.namespace, body.key, body.value);
+    return await this.systemService.updateKey(body.system, body.language, body.namespace, body.keys);
   }
 
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -135,6 +136,6 @@ export class TranslationsController {
   @HttpCode(204)
   @Delete('key')
   async deleteKey(@Body() body: CreateKeyDto) {
-    return await this.systemService.deleteKey(body.system, body.namespace, body.key);
+    return await this.systemService.deleteKey(body.system, body.namespace, body.keys);
   }
 }

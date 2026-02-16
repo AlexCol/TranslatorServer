@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
+import { TranslationKey } from '../../types/TranslationKey';
 import { Translation } from './entities/translation.entity';
 import { getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
@@ -94,16 +95,18 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   }
 
   //!sobre chaves
-  async createKey(entry: CatalogEntry, key: string, value: string): Promise<void> {
+  async createKey(entry: CatalogEntry, translationKeys: TranslationKey[]): Promise<void> {
     try {
       const baseTranslation = await this.getTranslation(entry);
       const baseJson = JSON.parse(baseTranslation?.json || '{}');
 
-      if (Object.hasOwn(baseJson, key)) {
-        throw new BadRequestException(`Key "${key}" already exists.`);
-      }
+      for (const { key, value } of translationKeys) {
+        if (Object.hasOwn(baseJson, key)) {
+          throw new BadRequestException(`Key "${key}" already exists.`);
+        }
 
-      baseJson[key] = value;
+        baseJson[key] = value;
+      }
 
       if (baseTranslation.id > 0) {
         await this.knex('translations')
@@ -116,25 +119,27 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         });
       }
 
-      this.logger.log(`Key "${key}" created in "${entry.system}/${entry.environment}/${entry.language}".`);
+      this.logger.log(`Keys created in "${entry.system}/${entry.environment}/${entry.language}".`);
     } catch (error) {
       this.logger.error(`Error creating key: ${error.message}`);
       throw new BadRequestException(`Failed to create key: ${error.message}`);
     }
   }
 
-  async createTranslation(entry: CatalogEntry, key: string, value: string): Promise<void> {
+  async createTranslation(entry: CatalogEntry, translationKeys: TranslationKey[]): Promise<void> {
     try {
       const baseJson = await this.getTranslation({ ...entry, language: '' });
       const baseJsonObj = JSON.parse(baseJson.json || '{}');
 
-      if (!Object.hasOwn(baseJsonObj, key)) {
-        throw new BadRequestException(`Key "${key}" does not exist in base language.`);
-      }
-
       const langJson = await this.getTranslation(entry);
       const langJsonObj = JSON.parse(langJson.json || '{}');
-      langJsonObj[key] = value;
+
+      for (const { key, value } of translationKeys) {
+        if (!Object.hasOwn(baseJsonObj, key)) {
+          throw new BadRequestException(`Key "${key}" does not exist in base language.`);
+        }
+        langJsonObj[key] = value;
+      }
 
       if (langJson.id > 0) {
         await this.knex('translations')
@@ -147,7 +152,7 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         });
       }
 
-      const msg = `Translation for key "${key}" created in "${entry.system}/${entry.environment}/${entry.language}".`;
+      const msg = `Translations created in "${entry.system}/${entry.environment}/${entry.language}".`;
       this.logger.log(msg);
     } catch (error) {
       this.logger.error(`Error creating translation: ${error.message}`);
@@ -155,29 +160,30 @@ export class DatabaseTranslationProvider implements TranslationProvider {
     }
   }
 
-  async updateKey(entry: CatalogEntry, key: string, value: string): Promise<void> {
+  async updateKey(entry: CatalogEntry, translationKeys: TranslationKey[]): Promise<void> {
     try {
       const json = await this.getTranslation(entry);
       const jsonObj = JSON.parse(json.json || '{}');
 
-      if (!Object.hasOwn(jsonObj, key)) {
-        throw new BadRequestException(`Key "${key}" does not exist.`);
+      for (const { key, value } of translationKeys) {
+        if (!Object.hasOwn(jsonObj, key)) {
+          throw new BadRequestException(`Key "${key}" does not exist.`);
+        }
+        jsonObj[key] = value;
       }
-
-      jsonObj[key] = value;
 
       await this.knex('translations')
         .where({ id: json.id })
         .update({ json: JSON.stringify(jsonObj) });
 
-      this.logger.log(`Key "${key}" updated in "${entry.system}/${entry.environment}/${entry.language}".`);
+      this.logger.log(`Keys updated in "${entry.system}/${entry.environment}/${entry.language}".`);
     } catch (error) {
-      this.logger.error(`Error updating key: ${error.message}`);
-      throw new BadRequestException(`Failed to update key: ${error.message}`);
+      this.logger.error(`Error updating keys: ${error.message}`);
+      throw new BadRequestException(`Failed to update keys: ${error.message}`);
     }
   }
 
-  async deleteKey(entry: CatalogEntry, key: string): Promise<void> {
+  async deleteKey(entry: CatalogEntry, keys: string[]): Promise<void> {
     try {
       await this.knex.transaction(async (trx) => {
         const sysId = await getSystemId(trx, entry.system);
@@ -186,20 +192,27 @@ export class DatabaseTranslationProvider implements TranslationProvider {
         for (const lang of langs) {
           const translation = await this.getTranslation({ ...entry, language: lang.code }, trx);
           const jsonObj = JSON.parse(translation.json || '{}');
-          if (Object.hasOwn(jsonObj, key)) {
-            delete jsonObj[key];
+
+          let deleted = false;
+          for (const key of keys) {
+            if (Object.hasOwn(jsonObj, key)) {
+              delete jsonObj[key];
+              deleted = true;
+            }
+          }
+          if (deleted) {
             await trx('translations')
               .where({ id: translation.id })
               .update({ json: JSON.stringify(jsonObj) });
-            this.logger.log(`Key "${key}" deleted from "${entry.system}/${entry.environment}/${lang.code}".`);
+            this.logger.log(`Keys deleted from "${entry.system}/${entry.environment}/${lang.code}".`);
           }
         }
       });
 
-      this.logger.log(`Key "${key}" deleted from all languages in "${entry.system}/${entry.environment}".`);
+      this.logger.log(`Keys deleted from all languages in "${entry.system}/${entry.environment}".`);
     } catch (error) {
-      this.logger.error(`Error deleting key: ${error.message}`);
-      throw new BadRequestException(`Failed to delete key: ${error.message}`);
+      this.logger.error(`Error deleting keys: ${error.message}`);
+      throw new BadRequestException(`Failed to delete keys: ${error.message}`);
     }
   }
 
@@ -265,4 +278,3 @@ export class DatabaseTranslationProvider implements TranslationProvider {
   }
   //endregion
 }
-

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { TranslationKey } from '../core/types/TranslationKey';
 import { TranslationsCacheService } from '../translations-cache.service';
 import { TranslationProvider } from '@/modules/core-translations/core/interfaces/TranslationProvider';
 import { CatalogEntry, TranslationStatus } from '@/modules/core-translations/core/types';
@@ -44,50 +45,55 @@ export class TranslationsService {
     return json;
   }
 
-  async createKey(system: string, namespace: string, key: string, value: string): Promise<void> {
+  async createKey(system: string, namespace: string, translationKeys: TranslationKey[]): Promise<void> {
     const newKeyCatalog = {
       system: system,
       environment: 'dev',
       language: '',
       namespace: namespace,
     } satisfies CatalogEntry;
-    const result = await this.provider.createKey(newKeyCatalog, key, value);
+    const result = await this.provider.createKey(newKeyCatalog, translationKeys);
     await this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 
-  async createTranslation(system: string, language: string, namespace: string, key: string, value: string) {
+  async createTranslation(system: string, language: string, namespace: string, translationKeys: TranslationKey[]) {
     const entry = {
       system: system,
       environment: 'dev',
       language: language,
       namespace: namespace,
     } satisfies CatalogEntry;
-    const result = await this.provider.createTranslation(entry, key, value);
+    const result = await this.provider.createTranslation(entry, translationKeys);
     await this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 
-  async updateKey(system: string, language: string, namespace: string, key: string, value: string): Promise<void> {
+  async updateKey(
+    system: string,
+    language: string,
+    namespace: string,
+    translationKeys: TranslationKey[],
+  ): Promise<void> {
     const entry = {
       system: system,
       environment: 'dev',
       language: language,
       namespace: namespace,
     } satisfies CatalogEntry;
-    const result = await this.provider.updateKey(entry, key, value);
+    const result = await this.provider.updateKey(entry, translationKeys);
     await this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }
 
-  async deleteKey(system: string, namespace: string, key: string): Promise<void> {
+  async deleteKey(system: string, namespace: string, keys: string[]): Promise<void> {
     const entry = {
       system: system,
       environment: 'dev',
       language: '',
       namespace: namespace,
     } satisfies CatalogEntry;
-    const result = await this.provider.deleteKey(entry, key);
+    const result = await this.provider.deleteKey(entry, keys);
     await this.cache.deleteByPrefix(`${system}:dev`); //limpa cache para forçar recarregamento das traduções
     return result;
   }

@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
+import { Namespace } from './entities/namespace.entity';
 import { getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { LanguageProvider } from '@/modules/core-translations/core/interfaces/LanguageProvider';
@@ -42,7 +43,7 @@ export class DatabaseLanguageProvider implements LanguageProvider {
         is_base: false,
       });
 
-      await this.replacateBaseLanguageNamespaces(system, 'dev', language);
+      await this.replicateBaseLanguageNamespaces(system, 'dev', language);
 
       this.logger.debug(`Language '${language}' created successfully for system '${system}' in 'dev' environment`);
     } catch (error) {
@@ -148,7 +149,7 @@ export class DatabaseLanguageProvider implements LanguageProvider {
   /******************************************************/
   /* Metodos privados                                   */
   /******************************************************/
-  async replacateBaseLanguageNamespaces(system: string, env: string, language: string): Promise<void> {
+  async replicateBaseLanguageNamespaces(system: string, env: string, language: string): Promise<void> {
     try {
       const systemId = await getSystemId(this.knex, system);
       const envId = await getEnvironmentId(this.knex, systemId, env);
@@ -168,18 +169,23 @@ export class DatabaseLanguageProvider implements LanguageProvider {
       }
       const newLangId = newLangRow.id;
 
-      const namespaces = await this.knex('namespaces').where({ language_id: baseLangId }).select('name');
-      for (const ns of namespaces) {
-        const exists = await this.knex('namespaces').where({ language_id: newLangId, name: ns.name }).first();
-        if (!exists) {
-          await this.knex('namespaces').insert({ language_id: newLangId, name: ns.name });
-          const msg = `Namespace '${ns.name}' replicated to language '${language}' for system '${system}' and env '${env}'.`;
-          this.logger.debug(msg);
-        } else {
-          const msg = `Namespace '${ns.name}' already exists for language '${language}' in system '${system}' and env '${env}'. Skipping.`;
-          this.logger.debug(msg);
+      await this.knex.transaction(async (trx) => {
+        const namespaces = await trx('namespaces').where({ language_id: baseLangId }).select('name');
+        for (const ns of namespaces) {
+          const exists = await trx('namespaces').where({ language_id: newLangId, name: ns.name }).first();
+          if (!exists) {
+            const obj = await trx('namespaces')
+              .insert({ language_id: newLangId, name: ns.name })
+              .returning<Namespace[]>('*');
+            await trx('translations').insert({ namespace_id: obj[0].id, json: '{}' });
+            const msg = `Namespace '${ns.name}' replicated to language '${language}' for system '${system}' and env '${env}'.`;
+            this.logger.debug(msg);
+          } else {
+            const msg = `Namespace '${ns.name}' already exists for language '${language}' in system '${system}' and env '${env}'. Skipping.`;
+            this.logger.debug(msg);
+          }
         }
-      }
+      });
     } catch (error) {
       const msg = `Error replicating namespaces from base language to '${language}' for system '${system}' and env '${env}': ${error.message}`;
       this.logger.error(msg);

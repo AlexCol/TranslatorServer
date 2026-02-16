@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { TranslationKeyDto } from './translation-keys.dto';
 export class CreateTranslationDto {
   @ApiProperty()
   @IsString()
@@ -26,12 +27,6 @@ export class CreateTranslationDto {
   language: string;
 
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  key: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  value: string;
+  keys: TranslationKeyDto[];
 }

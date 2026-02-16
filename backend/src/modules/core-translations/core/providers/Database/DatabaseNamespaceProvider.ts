@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
+import { Namespace } from './entities/namespace.entity';
 import { getSystemId } from './utils';
 import { getEnvironmentId } from './utils/getEnvironmentId';
 import { getLanguage } from './utils/getLanguage';
@@ -55,7 +56,10 @@ export class DatabaseNamespaceProvider implements NamespaceProvider {
 
       await this.knex.transaction(async (trx) => {
         for (const lang of langs) {
-          await trx('namespaces').insert({ language_id: lang.id, name: namespace });
+          const newObj = await trx('namespaces')
+            .insert({ language_id: lang.id, name: namespace })
+            .returning<Namespace[]>('*');
+          await trx('translations').insert({ namespace_id: newObj[0].id, json: '{}' });
         }
       });
 
