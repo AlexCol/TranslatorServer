@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { TSForm, TSInput, TSText } from '@/components/primitives';
-import { BsBox, BsButton } from '@/components/singles/BaseComponents';
+import { TSForm } from '@/components/primitives';
+import { BsBox, BsButton, BsInput, BsLabel } from '@/components/singles/BaseComponents';
 import { useAuthContext } from '@/contexts/Auth/AuthContext';
 import { setRememberMe } from '@/services/api';
 import { getTranslations } from '@/services/generated/translations/translations';
@@ -74,9 +74,9 @@ function Login() {
   return (
     <BsBox className='flex min-h-screen flex-col items-center justify-center'>
       <TSForm onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <TSText>Welcome, !</TSText>
-        <TSInput type='text' placeholder='Login' value={login} onChange={(e) => setLogin(e.target.value)} />
-        <TSInput
+        <BsLabel>Welcome, !</BsLabel>
+        <BsInput type='text' placeholder='Login' value={login} onChange={(e) => setLogin(e.target.value)} />
+        <BsInput
           type='password'
           placeholder='Password'
           value={password}
