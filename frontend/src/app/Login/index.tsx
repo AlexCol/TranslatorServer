@@ -1,6 +1,8 @@
 import { loginStyles } from './login.styles';
 import { useLogin } from './useLogin';
 import { BsBox, BsButton, BsForm, BsInput, BsLabel } from '@/components/singles/BaseComponents';
+import { BsCheckbox } from '@/components/singles/BaseComponents/BsCheckbox';
+import { setRememberMe } from '@/services/api';
 
 function Login() {
   const { login, password, onLoginChange, onPasswordChange, handleSubmit } = useLogin();
@@ -44,6 +46,17 @@ function Login() {
               className={loginStyles.inputTC}
               required
             />
+          </BsBox>
+
+          <BsBox className={loginStyles.rememberSectionTC}>
+            <BsCheckbox
+              id='rememberMe'
+              className={loginStyles.checkboxTC}
+              onCheckedChange={(checked) => setRememberMe(checked === true)}
+            />
+            <BsLabel htmlFor='rememberMe' className={loginStyles.rememberLabelTC}>
+              Lembrar-me
+            </BsLabel>
           </BsBox>
 
           <BsButton type='submit' variants={{ variant: 'default' }} className={loginStyles.submitButtonTC}>
