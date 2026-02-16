@@ -1,4 +1,4 @@
-import { LogOut } from 'lucide-react';
+import { LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Link } from 'react-router-dom';
 import { headerStyles } from './header.styles';
@@ -32,7 +32,7 @@ function Header() {
           Opção 2
         </Link>
         <BsBox elementProps={{ onClick: themeHandle }} className={headerStyles.link}>
-          {`${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          {theme === 'dark' ? <Sun /> : <Moon />}
         </BsBox>
         <BsBox elementProps={{ onClick: signOut }} className={headerStyles.link}>
           <LogOut className={headerStyles.logoutIcon} />

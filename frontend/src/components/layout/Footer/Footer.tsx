@@ -5,8 +5,8 @@ function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <BsBox as={'footer'} className={footerTailwindClass}>
-      <TSText className='text-sm'>© {currentYear} Sistema de Chamados.</TSText>
+    <BsBox as='footer' className={footerTailwindClass}>
+      <TSText className='text-sm'>{`© ${currentYear} Translator Server.`}</TSText>
     </BsBox>
   );
 }

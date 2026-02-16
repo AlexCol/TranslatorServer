@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 function BsButton(props: BsButtonProps) {
-  const { buttonProps, variants, asChild, children, className, type } = props;
+  const { buttonProps, variants, asChild, children, className, type, onClick } = props;
   const variant = variants?.variant ?? 'default';
 
   return (
     <Button
       className={cn(bsButtonStyles.customTC(variant), className)}
       type={type}
+      onClick={onClick}
       {...variants}
       {...buttonProps}
       asChild={asChild}

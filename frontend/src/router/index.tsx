@@ -7,7 +7,7 @@ import { useAuthContext } from '@/contexts/Auth/AuthContext';
 function Router() {
   const { userData } = useAuthContext();
   return (
-    <BsBox className='h-full flex items-center justify-center'>
+    <BsBox className='min-h-screen w-full'>
       <BrowserRouter>
         {userData ? (
           <LoggedRoutes /> //? Rotas autenticadas

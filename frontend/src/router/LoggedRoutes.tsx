@@ -5,16 +5,15 @@ import Dashboard from '@/app/DashBoard';
 import Footer from '@/components/layout/Footer/Footer';
 import Header from '@/components/layout/Header/Header';
 import Main from '@/components/layout/Main/Main';
+import Sidebar from '@/components/layout/Sidebar/Sidebar';
 import { BsBox } from '@/components/singles/BaseComponents';
 
 function LoggedRoutes() {
   return (
-    <BsBox className='min-h-full w-full flex overflow-hidden'>
-      {/* 
-        //? aqui vai o menu lateral 
-      */}
+    <BsBox className='min-h-screen w-full flex overflow-hidden'>
+      <Sidebar />
 
-      <BsBox className='min-h-full w-full flex flex-1 flex-col overflow-hidden'>
+      <BsBox className='min-h-screen w-full flex flex-1 flex-col overflow-hidden'>
         <Header />
         <Main>
           <Routes>
