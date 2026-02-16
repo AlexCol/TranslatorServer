@@ -5,7 +5,7 @@ type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>['variant']>
 
 const invertedByVariant: Record<ButtonVariant, string> = {
   default: `
-    hover:bg-background
+    hover:bg-primary-foreground
     hover:text-primary
   `,
   destructive: `

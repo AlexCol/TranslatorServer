@@ -1,91 +1,56 @@
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { loginStyles } from './login.styles';
+import { useLogin } from './useLogin';
 import { BsBox, BsButton, BsForm, BsInput, BsLabel } from '@/components/singles/BaseComponents';
-import { useAuthContext } from '@/contexts/Auth/AuthContext';
-import { setRememberMe } from '@/services/api';
-import { getTranslations } from '@/services/generated/translations/translations';
-
-function useLogin() {
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  const [jsonData, setJsonData] = useState<Record<string, any> | null>(null);
-  const { isAuthenticated, userData, signIn, signOut } = useAuthContext();
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-    } catch {
-    } finally {
-    }
-  };
-
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      setRememberMe(true); // Ativar rememberMe para este login
-      await signIn({
-        credentials: {
-          username: login,
-          password,
-        },
-        rememberMe: true,
-      });
-    } catch {}
-  };
-
-  const fetchTranslations = async () => {
-    try {
-      const system = 'backend';
-      const environment = 'dev';
-      const language = 'pt-BR';
-      const namespace = 'Contratos';
-      const json = await getTranslations().translationsControllerLoadWithFallBack(
-        system,
-        environment,
-        language,
-        namespace,
-      );
-      setJsonData(json);
-      toast.success('Translations fetched successfully!');
-    } catch (error) {
-      toast.error('Failed to fetch translations: ' + (error instanceof Error ? error.message : 'Unknown error'));
-    }
-  };
-
-  return {
-    login,
-    setLogin,
-    password,
-    setPassword,
-    loggedIn: isAuthenticated,
-    handleSubmit,
-    handleLogout,
-    loggedData: userData,
-    fetchTranslations,
-    jsonData,
-  };
-}
 
 function Login() {
-  const states = useLogin();
-  const { login, setLogin, password, setPassword, handleSubmit } = states;
+  const { login, password, onLoginChange, onPasswordChange, handleSubmit } = useLogin();
 
   return (
-    <BsBox className='flex min-h-screen flex-col items-center justify-center'>
-      <BsForm onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <BsLabel>Welcome, !</BsLabel>
-        <BsInput type='text' placeholder='Login' value={login} onChange={(e) => setLogin(e.target.value)} />
-        <BsInput
-          type='password'
-          placeholder='Password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+    <BsBox className={loginStyles.pageTC}>
+      <BsBox className={loginStyles.decorOrbOneTC} />
+      <BsBox className={loginStyles.decorOrbTwoTC} />
 
-        <BsButton type='submit' variants={{ variant: 'default' }}>
-          Submit
-        </BsButton>
-      </BsForm>
+      <BsBox className={loginStyles.cardTC}>
+        <BsBox className={loginStyles.logoWrapTC}>
+          <img src='/main-logo.png' alt='Main logo' className={loginStyles.logoTC} />
+        </BsBox>
+
+        <BsBox className={loginStyles.brandSectionTC}>
+          <BsLabel className={loginStyles.brandBadgeTC}>Translator Server</BsLabel>
+          <BsLabel className={loginStyles.titleTC}>Acesse sua conta</BsLabel>
+          <BsLabel className={loginStyles.subtitleTC}>Use suas credenciais para continuar</BsLabel>
+        </BsBox>
+
+        <BsForm onSubmit={handleSubmit} className={loginStyles.formTC}>
+          <BsBox className={loginStyles.fieldTC}>
+            <BsLabel className={loginStyles.fieldLabelTC}>Usuario</BsLabel>
+            <BsInput
+              type='text'
+              placeholder='seu.usuario'
+              value={login}
+              onChange={onLoginChange}
+              className={loginStyles.inputTC}
+              required
+            />
+          </BsBox>
+
+          <BsBox className={loginStyles.fieldTC}>
+            <BsLabel className={loginStyles.fieldLabelTC}>Senha</BsLabel>
+            <BsInput
+              type='password'
+              placeholder='••••••••'
+              value={password}
+              onChange={onPasswordChange}
+              className={loginStyles.inputTC}
+              required
+            />
+          </BsBox>
+
+          <BsButton type='submit' variants={{ variant: 'default' }} className={loginStyles.submitButtonTC}>
+            Entrar
+          </BsButton>
+        </BsForm>
+      </BsBox>
     </BsBox>
   );
 }
