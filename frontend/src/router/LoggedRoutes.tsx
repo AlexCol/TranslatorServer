@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import NotFound from '@/app/_NotFound/not-found';
 import About from '@/app/About';
-import Dashboard from '@/app/DashBoard';
+import { Dashboard } from '@/app/Dashboard';
 import Footer from '@/components/layout/Footer/Footer';
 import Header from '@/components/layout/Header/Header';
 import Main from '@/components/layout/Main/Main';
@@ -10,10 +10,10 @@ import { BsBox } from '@/components/singles/BaseComponents';
 
 function LoggedRoutes() {
   return (
-    <BsBox className='min-h-screen w-full flex overflow-hidden'>
+    <BsBox className='h-screen w-full flex overflow-hidden'>
       <Sidebar />
 
-      <BsBox className='min-h-screen w-full flex flex-1 flex-col overflow-hidden'>
+      <BsBox className='h-screen min-h-0 w-full flex flex-1 flex-col overflow-hidden'>
         <Header />
         <Main>
           <Routes>

@@ -12,7 +12,7 @@ function Main({ children }: { children: React.ReactNode }) {
 export default Main;
 
 const mainTailwindClass = `
-  h-full
   flex-1
+  min-h-0
   overflow-y-auto
 `;

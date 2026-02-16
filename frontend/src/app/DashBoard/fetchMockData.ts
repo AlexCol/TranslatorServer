@@ -1,0 +1,293 @@
+import type { TranslationOverview } from './types';
+
+export async function fetchMockData() {
+  const MOCK_DATA: TranslationOverview = {
+    totals: {
+      systems: 2,
+      environments: 4,
+      languages: 9,
+      namespaces: 18,
+      totalTerms: 72,
+      translatedTerms: 33,
+      missingTerms: 39,
+      translatedPercentage: 3,
+    },
+    systems: [
+      {
+        system: 'backend',
+        totalTerms: 40,
+        translatedTerms: 17,
+        missingTerms: 23,
+        translatedPercentage: 4,
+        environments: [
+          {
+            environment: 'dev',
+            baseLanguage: 'pt-BR',
+            totalTerms: 32,
+            translatedTerms: 9,
+            missingTerms: 23,
+            translatedPercentage: 4,
+            languages: [
+              {
+                language: 'es',
+                isBase: false,
+                totalTerms: 8,
+                translatedTerms: 0,
+                missingTerms: 8,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Contratos',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                  {
+                    namespace: 'Faturamento',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                ],
+              },
+              {
+                language: 'es-AR',
+                isBase: false,
+                totalTerms: 8,
+                translatedTerms: 1,
+                missingTerms: 7,
+                translatedPercentage: 13,
+                namespaces: [
+                  {
+                    namespace: 'Contratos',
+                    totalTerms: 4,
+                    translatedTerms: 1,
+                    missingTerms: 3,
+                    translatedPercentage: 25,
+                  },
+                  {
+                    namespace: 'Faturamento',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                ],
+              },
+              {
+                language: 'pt-BR',
+                isBase: true,
+                totalTerms: 8,
+                translatedTerms: 8,
+                missingTerms: 0,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Contratos',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                  {
+                    namespace: 'Faturamento',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                ],
+              },
+              {
+                language: 'pt-PT',
+                isBase: false,
+                totalTerms: 8,
+                translatedTerms: 0,
+                missingTerms: 8,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Contratos',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                  {
+                    namespace: 'Faturamento',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            environment: 'prod',
+            baseLanguage: 'pt-BR',
+            totalTerms: 8,
+            translatedTerms: 8,
+            missingTerms: 0,
+            translatedPercentage: 0,
+            languages: [
+              {
+                language: 'pt-BR',
+                isBase: true,
+                totalTerms: 8,
+                translatedTerms: 8,
+                missingTerms: 0,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Contratos',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                  {
+                    namespace: 'Faturamento',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        system: 'frontend',
+        totalTerms: 32,
+        translatedTerms: 16,
+        missingTerms: 16,
+        translatedPercentage: 0,
+        environments: [
+          {
+            environment: 'dev',
+            baseLanguage: 'pt-BR',
+            totalTerms: 24,
+            translatedTerms: 8,
+            missingTerms: 16,
+            translatedPercentage: 0,
+            languages: [
+              {
+                language: 'es',
+                isBase: false,
+                totalTerms: 8,
+                translatedTerms: 0,
+                missingTerms: 8,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Cadastro',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                  {
+                    namespace: 'Login',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                ],
+              },
+              {
+                language: 'es-AR',
+                isBase: false,
+                totalTerms: 8,
+                translatedTerms: 0,
+                missingTerms: 8,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Cadastro',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                  {
+                    namespace: 'Login',
+                    totalTerms: 4,
+                    translatedTerms: 0,
+                    missingTerms: 4,
+                    translatedPercentage: 0,
+                  },
+                ],
+              },
+              {
+                language: 'pt-BR',
+                isBase: true,
+                totalTerms: 8,
+                translatedTerms: 8,
+                missingTerms: 0,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Cadastro',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                  {
+                    namespace: 'Login',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            environment: 'prod',
+            baseLanguage: 'pt-BR',
+            totalTerms: 8,
+            translatedTerms: 8,
+            missingTerms: 0,
+            translatedPercentage: 0,
+            languages: [
+              {
+                language: 'pt-BR',
+                isBase: true,
+                totalTerms: 8,
+                translatedTerms: 8,
+                missingTerms: 0,
+                translatedPercentage: 0,
+                namespaces: [
+                  {
+                    namespace: 'Cadastro',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                  {
+                    namespace: 'Login',
+                    totalTerms: 4,
+                    translatedTerms: 4,
+                    missingTerms: 0,
+                    translatedPercentage: 100,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  return MOCK_DATA;
+}

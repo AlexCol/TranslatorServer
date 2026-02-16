@@ -6,7 +6,6 @@
  * OpenAPI spec version: 1.0
  */
 import type { StringResponseDto } from '.././models';
-
 import { apiClient } from '../../api-mutator';
 
 export const getApp = () => {
