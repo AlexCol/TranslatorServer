@@ -1,10 +1,13 @@
 import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
+import { PublishAllProps } from '../../types/PublishAllProps';
+import { Environment } from './entities/environment.entity';
 import { Language } from './entities/language.entity';
+import { Namespace } from './entities/namespace.entity';
 import { Translation } from './entities/translation.entity';
 import { getEnvironmentId, getLanguage, getLanguages, getNamespaceId, getSystemId, getTranslation } from './utils';
 import { PublisherProvider } from '@/modules/core-translations/core/interfaces/PublisherProvider';
-import { PublishProps } from '@/modules/core-translations/core/types/PublishProps';
+import { PublishNamespaceProps } from '@/modules/core-translations/core/types/PublishNamespaceProps';
 import { KNEX_CONNECTION } from '@/modules/infra/database/knex/constants';
 
 export class DatabasePublisherProvider implements PublisherProvider {
@@ -16,7 +19,7 @@ export class DatabasePublisherProvider implements PublisherProvider {
   /******************************************************/
   /* Metodos da interface                               */
   /******************************************************/
-  async publishNamespace(props: PublishProps): Promise<string> {
+  async publishNamespace(props: PublishNamespaceProps): Promise<string> {
     const { system, language, namespace, from, to } = props;
 
     await this.knex.transaction(async (trx) => {
@@ -42,11 +45,36 @@ export class DatabasePublisherProvider implements PublisherProvider {
 
     return 'Namespace published successfully!';
   }
+
+  async publishAll(props: PublishAllProps): Promise<string> {
+    const { system, from, to } = props;
+    await this.knex.transaction(async (trx) => {
+      const sysId = await getSystemId(trx, system);
+
+      await this.removeAllToEnvironmentData(trx, sysId, to);
+
+      //? from data
+      const fromEnvId = await getEnvironmentId(trx, sysId, from);
+      const fromLanguages = await getLanguages(trx, fromEnvId);
+
+      //? creating data
+      const toEnv = await this.createToEnvironment(trx, sysId, from, to);
+      for (const fromLang of fromLanguages) {
+        await this.createToLanguage(trx, toEnv.id, fromLang);
+      }
+
+      //const fromLangs = await getLanguages(trx, fromEnvId);
+    });
+    return 'All environments published successfully!';
+  }
   //#endregion
 
   //#region Metodos privados
   /******************************************************/
   /* Metodos privados                                   */
+  /******************************************************/
+  /******************************************************/
+  /* Metodos privados - auxiliares do publish namespace */
   /******************************************************/
   private async getToLanguageIdOrCreate(trx: Knex, toEnvId: number, language: string): Promise<number> {
     try {
@@ -135,5 +163,48 @@ export class DatabasePublisherProvider implements PublisherProvider {
       }
     }
   }
+
+  /******************************************************/
+  /* Metodos privados - auxiliares do publish all       */
+  /******************************************************/
+  private async removeAllToEnvironmentData(trx: Knex.Transaction<any, any[]>, sysId: number, to: string) {
+    await trx('environments').where({ systemId: sysId, name: to }).del();
+  }
+
+  private async createToEnvironment(trx: Knex, systemId: number, from: string, to: string): Promise<Environment> {
+    const env = await trx.select('*').from<Environment>('environments').where({ systemId, name: from }).first();
+    if (!env) {
+      throw new Error(`Environment '${from}' does not exist for system ID '${systemId}'`);
+    }
+
+    const newEnv = await trx<Environment>('environments').insert({ systemId, name: to }).returning('*');
+    return newEnv[0];
+  }
+
+  private async createToLanguage(trx: Knex, environmentId: number, fromLang: Language) {
+    const newLanguage = await trx<Language>('languages')
+      .insert({ environmentId, code: fromLang.code, isBase: fromLang.isBase })
+      .returning('*');
+    const newLang = newLanguage[0];
+
+    const fromNamespaces = await trx.select('*').from<Namespace>('namespaces').where({ languageId: fromLang.id });
+    for (const fromNs of fromNamespaces) {
+      await this.createToNamespace(trx, newLang.id, fromNs);
+    }
+  }
+
+  private async createToNamespace(trx: Knex, languageId: number, fromNs: Namespace) {
+    const newNs = await trx('namespaces').insert({ languageId: languageId, name: fromNs.name }).returning('*');
+    const newNamespace = newNs[0];
+    const fromTranslation = await trx
+      .select('*')
+      .from<Translation>('translations')
+      .where({ namespaceId: fromNs.id })
+      .first();
+    if (fromTranslation) {
+      await trx('translations').insert({ namespaceId: newNamespace.id, json: fromTranslation.json }).returning('*');
+    }
+  }
+
   //#endregion
 }

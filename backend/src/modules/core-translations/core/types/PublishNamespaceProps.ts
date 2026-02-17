@@ -1,4 +1,4 @@
-export type PublishProps = {
+export type PublishNamespaceProps = {
   system: string;
   language: string;
   namespace: string;
