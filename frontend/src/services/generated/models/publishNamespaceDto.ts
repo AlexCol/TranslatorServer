@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface PublishDto {
+export interface PublishNamespaceDto {
   system: string;
   language: string;
   namespace: string;

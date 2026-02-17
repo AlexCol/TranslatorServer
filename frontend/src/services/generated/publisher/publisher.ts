@@ -5,7 +5,7 @@
  * API para gerenciamento de traduções.
  * OpenAPI spec version: 1.0
  */
-import type { PublishDto, StringResponseDto } from '.././models';
+import type { PublishAllDto, PublishNamespaceDto, StringResponseDto } from '.././models';
 
 import { apiClient } from '../../api-mutator';
 
@@ -14,16 +14,31 @@ export const getPublisher = () => {
    * Publishes a namespace to the translation service.
    * @summary Publish a namespace
    */
-  const publisherControllerPublishNamespace = (publishDto: PublishDto) => {
+  const publisherControllerPublishNamespace = (publishNamespaceDto: PublishNamespaceDto) => {
     return apiClient<StringResponseDto>({
       url: `/api/publisher/publish-namespace`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: publishDto,
+      data: publishNamespaceDto,
     });
   };
-  return { publisherControllerPublishNamespace };
+  /**
+   * Publishes all namespaces to the translation service.
+   * @summary Publish all namespaces
+   */
+  const publisherControllerPublishAll = (publishAllDto: PublishAllDto) => {
+    return apiClient<StringResponseDto>({
+      url: `/api/publisher/publish-all`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: publishAllDto,
+    });
+  };
+  return { publisherControllerPublishNamespace, publisherControllerPublishAll };
 };
 export type PublisherControllerPublishNamespaceResult = NonNullable<
   Awaited<ReturnType<ReturnType<typeof getPublisher>['publisherControllerPublishNamespace']>>
+>;
+export type PublisherControllerPublishAllResult = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof getPublisher>['publisherControllerPublishAll']>>
 >;

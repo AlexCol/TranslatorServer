@@ -1,4 +1,4 @@
-const languageRowStyles = {
+﻿const languageRowStyles = {
   containerTC: `border-l border-border/70 ml-1`,
 
   buttonTC: `w-full h-auto justify-start rounded-none border-0 hover:border-transparent shadow-none flex items-center gap-3 pl-4 pr-3 py-2.5 hover:bg-muted/30 transition-colors duration-150 text-left group`,

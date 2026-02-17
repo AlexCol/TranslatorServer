@@ -1,9 +1,8 @@
 ﻿import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRightIcon, GlobeIcon } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { NamespaceRow } from '../NamespaceRow';
 import languageRowStyles from './language-row.styles';
+import { useLanguageRow } from './useLanguageRow';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
 import type { LanguageData } from '@/app/Dashboard/types';
 import { BsBox, BsButton } from '@/components/singles/BaseComponents';
@@ -17,26 +16,14 @@ export type LanguageRowProps = {
   onRefresh: () => Promise<void>;
 };
 
-export function LanguageRow({
-  language,
-  systemName,
-  environmentName,
-  availableEnvironments,
-  onRefresh,
-}: LanguageRowProps) {
-  const [expanded, setExpanded] = useState(false);
-  const navigate = useNavigate();
-  const actualPercentage =
-    language.totalTerms > 0 ? Math.round((language.translatedTerms / language.totalTerms) * 100) : 0;
-
-  const handleNamespaceClick = (namespace: string) => {
-    void navigate(`/traducoes/${systemName}/${environmentName}/${language.language}/${namespace}`);
-  };
+export function LanguageRow(props: LanguageRowProps) {
+  const { language, systemName, environmentName, availableEnvironments, onRefresh } = props;
+  const { expanded, setExpanded, actualPercentage, handleNamespaceClick } = useLanguageRow(props);
 
   return (
     <BsBox className={languageRowStyles.containerTC}>
       {/* -------------------------------------- */}
-      {/* Cabeçalho Clicavel */}
+      {/* Cabecalho Clicavel */}
       {/* -------------------------------------- */}
       <BsButton
         type='button'

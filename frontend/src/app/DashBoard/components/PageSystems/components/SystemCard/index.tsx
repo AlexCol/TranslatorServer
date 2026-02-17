@@ -8,11 +8,11 @@ import { BsBox, BsButton, BsText } from '@/components/singles/BaseComponents';
 import BsHeading from '@/components/singles/BaseComponents/BsHeading/BsHeading';
 import type { SystemDiagnostic } from '@/services/generated/models';
 
-interface SystemCardProps {
+type SystemCardProps = {
   system: SystemDiagnostic;
   index: number;
   onRefresh: () => Promise<void>;
-}
+};
 export function SystemCard({ system, index, onRefresh }: SystemCardProps) {
   const [expanded, setExpanded] = useState(false);
   const actualPercentage = system.totalTerms > 0 ? Math.round((system.translatedTerms / system.totalTerms) * 100) : 0;

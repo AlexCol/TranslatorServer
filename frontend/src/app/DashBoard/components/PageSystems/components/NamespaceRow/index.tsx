@@ -1,18 +1,16 @@
 import { motion } from 'framer-motion';
 import { ArrowRightIcon, UploadIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
 import namespaceRowStyles from './namespace-row.styles';
+import { useNamespaceRow } from './useNamespaceRow';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
 import type { LanguageData } from '@/app/Dashboard/types';
 import { TSSelect, TSSelectOption } from '@/components/primitives';
 import { BsBox, BsButton, BsText } from '@/components/singles/BaseComponents';
 import { Modal } from '@/components/singles/Modal/Modal';
-import { getPublisher } from '@/services/generated/publisher/publisher';
 
 type NamespaceItem = LanguageData['namespaces'][number];
 
-type NamespaceRowProps = {
+export type NamespaceRowProps = {
   namespace: NamespaceItem;
   index: number;
   onClick: (namespace: string) => void;
@@ -24,68 +22,11 @@ type NamespaceRowProps = {
   isOnBaseLanguage: boolean;
 };
 
-export function NamespaceRow({
-  namespace,
-  index,
-  onClick,
-  systemName,
-  environmentName,
-  languageName,
-  availableEnvironments,
-  onRefresh,
-  isOnBaseLanguage,
-}: NamespaceRowProps) {
-  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
-  const [selectedEnvironment, setSelectedEnvironment] = useState('');
-  const [isPublishing, setIsPublishing] = useState(false);
-
-  const namespacePercentage =
-    namespace.totalTerms > 0 ? Math.round((namespace.translatedTerms / namespace.totalTerms) * 100) : 0;
-
-  const destinationEnvironments = useMemo(
-    () => availableEnvironments.filter((environment) => environment !== environmentName),
-    [availableEnvironments, environmentName],
-  );
-
-  const openPublishModal = () => {
-    setSelectedEnvironment(destinationEnvironments[0] ?? '');
-    setIsPublishModalOpen(true);
-  };
-
-  const closePublishModal = () => {
-    if (isPublishing) {
-      return;
-    }
-
-    setIsPublishModalOpen(false);
-  };
-
-  const handlePublish = async () => {
-    if (!selectedEnvironment) {
-      toast.error('Selecione o ambiente de destino.');
-      return;
-    }
-
-    try {
-      setIsPublishing(true);
-      const response = await getPublisher().publisherControllerPublishNamespace({
-        system: systemName,
-        language: languageName,
-        namespace: namespace.namespace,
-        from: environmentName,
-        to: selectedEnvironment,
-      });
-
-      toast.success(response.data || 'Namespace publicado com sucesso.');
-      setIsPublishModalOpen(false);
-      await onRefresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Falha ao publicar namespace.';
-      toast.error(message);
-    } finally {
-      setIsPublishing(false);
-    }
-  };
+export function NamespaceRow(props: NamespaceRowProps) {
+  const { namespace, index, environmentName, languageName, onClick, isOnBaseLanguage } = props;
+  const states = useNamespaceRow(props);
+  const { isPublishModalOpen, openPublishModal, closePublishModal, handlePublish, isPublishing } = states;
+  const { namespacePercentage, destinationEnvironments, selectedEnvironment, setSelectedEnvironment } = states;
 
   return (
     <>
