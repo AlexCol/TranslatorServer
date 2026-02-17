@@ -1,6 +1,7 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { envConfig } from '@/envConfig';
 import { getTranslations } from '@/services/generated/translations/translations';
 
 type TranslationJson = Record<string, string | null | undefined>;
@@ -38,7 +39,7 @@ export default function useTraducoes() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasValidParams = Boolean(system && environment && language && namespace);
-  const canMutateTranslations = environment === 'dev';
+  const canMutateTranslations = environment === envConfig.devEnvironment;
 
   /******************************************************/
   /* Carregamento de traducoes                          */
@@ -297,3 +298,4 @@ function stringifyTranslationValue(value: string | null | undefined): string {
 
   return String(value);
 }
+

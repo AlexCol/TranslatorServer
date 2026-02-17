@@ -2,6 +2,7 @@
 import namespacesSectionStyles from './namespaces-section.styles';
 import useNamespacesSection from './useNamespacesSection';
 import { BsBox, BsButton, BsInput, BsText } from '@/components/singles/BaseComponents';
+import { envConfig } from '@/envConfig';
 
 type NamespacesSectionProps = {
   namespaces: string[];
@@ -31,8 +32,8 @@ export function NamespacesSection({
   const { newNamespace, setNewNamespace, canCreate, handleCreate } = useNamespacesSection({ onCreate });
 
   const canMutate = Boolean(selectedSystem && selectedEnvironment && selectedLanguage);
-  const canCreateOnCurrentEnvironment = canMutate && selectedEnvironment === 'dev';
-  const canDeleteOnCurrentEnvironment = canMutate && selectedEnvironment === 'dev';
+  const canCreateOnCurrentEnvironment = canMutate && selectedEnvironment === envConfig.devEnvironment;
+  const canDeleteOnCurrentEnvironment = canMutate && selectedEnvironment === envConfig.devEnvironment;
 
   return (
     <BsBox className={namespacesSectionStyles.containerTC}>
@@ -41,7 +42,7 @@ export function NamespacesSection({
         <BsText className={namespacesSectionStyles.subtitleTC}>
           {!canMutate
             ? 'Selecione um idioma primeiro.'
-            : selectedEnvironment !== 'dev'
+            : selectedEnvironment !== envConfig.devEnvironment
               ? 'Criação permitida apenas no ambiente dev.'
               : 'Clique para abrir a tela de traducoes.'}
         </BsText>
@@ -105,3 +106,5 @@ export function NamespacesSection({
     </BsBox>
   );
 }
+
+

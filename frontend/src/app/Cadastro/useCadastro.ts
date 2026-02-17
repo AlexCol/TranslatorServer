@@ -1,6 +1,7 @@
 ﻿import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { envConfig } from '@/envConfig';
 import { getEnvironment } from '@/services/generated/environment/environment';
 import { getLanguage } from '@/services/generated/language/language';
 import { getNamespace } from '@/services/generated/namespace/namespace';
@@ -284,8 +285,8 @@ export default function useCadastro() {
   };
 
   const deleteLanguage = async (code: string) => {
-    if (!selectedSystem || selectedEnvironment !== 'dev') {
-      if (selectedEnvironment && selectedEnvironment !== 'dev') {
+    if (!selectedSystem || selectedEnvironment !== envConfig.devEnvironment) {
+      if (selectedEnvironment && selectedEnvironment !== envConfig.devEnvironment) {
         toast.error('Exclusão de idioma permitida apenas no ambiente dev.');
       }
       return;
@@ -318,7 +319,7 @@ export default function useCadastro() {
     if (!selectedSystem || !selectedEnvironment) {
       return;
     }
-    if (selectedEnvironment !== 'dev') {
+    if (selectedEnvironment !== envConfig.devEnvironment) {
       toast.error('Promoção para idioma base permitida apenas no ambiente dev.');
       return;
     }
@@ -342,7 +343,7 @@ export default function useCadastro() {
     if (!selectedSystem || !selectedEnvironment) {
       return;
     }
-    if (selectedEnvironment !== 'dev') {
+    if (selectedEnvironment !== envConfig.devEnvironment) {
       toast.error('Rebaixamento de idioma base permitido apenas no ambiente dev.');
       return;
     }
@@ -386,8 +387,8 @@ export default function useCadastro() {
   };
 
   const deleteNamespace = async (namespace: string) => {
-    if (!selectedSystem || selectedEnvironment !== 'dev') {
-      if (selectedEnvironment && selectedEnvironment !== 'dev') {
+    if (!selectedSystem || selectedEnvironment !== envConfig.devEnvironment) {
+      if (selectedEnvironment && selectedEnvironment !== envConfig.devEnvironment) {
         toast.error('Exclusão de namespace permitida apenas no ambiente dev.');
       }
       return;
@@ -437,3 +438,4 @@ export default function useCadastro() {
     deleteNamespace,
   };
 }
+

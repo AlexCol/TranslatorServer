@@ -16,6 +16,7 @@ import {
   BsText,
 } from '@/components/singles/BaseComponents';
 import { Modal } from '@/components/singles/Modal/Modal';
+import { envConfig } from '@/envConfig';
 function Traducoes() {
   const {
     system,
@@ -116,7 +117,7 @@ function Traducoes() {
         </BsBox>
         {!canMutateTranslations && (
           <BsText variants={{ variant: 'small' }} className={traducoesStyles.mutationHintTC}>
-            Edição e criação de chave disponíveis apenas no ambiente dev.
+            Edição e criação de chave disponíveis apenas no ambiente {envConfig.devEnvironment}.
           </BsText>
         )}
       </BsBox>

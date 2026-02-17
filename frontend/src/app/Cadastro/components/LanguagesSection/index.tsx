@@ -2,6 +2,7 @@
 import languagesSectionStyles from './languages-section.styles';
 import useLanguagesSection from './useLanguagesSection';
 import { BsBox, BsButton, BsInput, BsText } from '@/components/singles/BaseComponents';
+import { envConfig } from '@/envConfig';
 
 type LanguagesSectionProps = {
   languages: string[];
@@ -41,9 +42,9 @@ export function LanguagesSection({
   const { newLanguage, setNewLanguage, canCreate, handleCreate } = useLanguagesSection({ onCreate });
 
   const canMutate = Boolean(selectedSystem && selectedEnvironment);
-  const canCreateOnCurrentEnvironment = canMutate && selectedEnvironment === 'dev';
-  const canDeleteOnCurrentEnvironment = canMutate && selectedEnvironment === 'dev';
-  const canChangeBaseOnCurrentEnvironment = canMutate && selectedEnvironment === 'dev';
+  const canCreateOnCurrentEnvironment = canMutate && selectedEnvironment === envConfig.devEnvironment;
+  const canDeleteOnCurrentEnvironment = canMutate && selectedEnvironment === envConfig.devEnvironment;
+  const canChangeBaseOnCurrentEnvironment = canMutate && selectedEnvironment === envConfig.devEnvironment;
 
   return (
     <BsBox className={languagesSectionStyles.containerTC}>
@@ -52,7 +53,7 @@ export function LanguagesSection({
         <BsText className={languagesSectionStyles.subtitleTC}>
           {!canMutate
             ? 'Selecione um ambiente primeiro.'
-            : selectedEnvironment !== 'dev'
+            : selectedEnvironment !== envConfig.devEnvironment
               ? 'Criação permitida apenas no ambiente dev.'
               : `Base atual: ${baseLanguage || '-'}`}
         </BsText>
@@ -151,3 +152,5 @@ export function LanguagesSection({
     </BsBox>
   );
 }
+
+
