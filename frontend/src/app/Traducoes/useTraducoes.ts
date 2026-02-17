@@ -38,6 +38,7 @@ export default function useTraducoes() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasValidParams = Boolean(system && environment && language && namespace);
+  const canMutateTranslations = environment === 'dev';
 
   /******************************************************/
   /* Carregamento de traducoes                          */
@@ -167,6 +168,10 @@ export default function useTraducoes() {
     if (!system || !language || !namespace || changedEntries.length === 0) {
       return;
     }
+    if (!canMutateTranslations) {
+      toast.error('Salvar tradução permitido apenas no ambiente dev.');
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -201,6 +206,10 @@ export default function useTraducoes() {
 
   const handleCreateNewKey = async () => {
     if (!system || !namespace) {
+      return;
+    }
+    if (!canMutateTranslations) {
+      toast.error('Criação de chave permitida apenas no ambiente dev.');
       return;
     }
 
@@ -249,6 +258,7 @@ export default function useTraducoes() {
     newKey,
     isSubmitting,
     hasValidParams,
+    canMutateTranslations,
     totalPages,
     pageSizeOptions: PAGE_SIZE_OPTIONS,
     paginatedRows,

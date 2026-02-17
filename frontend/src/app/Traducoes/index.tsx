@@ -35,6 +35,7 @@ function Traducoes() {
     newKey,
     isSubmitting,
     hasValidParams,
+    canMutateTranslations,
     totalPages,
     pageSizeOptions,
     paginatedRows,
@@ -98,7 +99,7 @@ function Traducoes() {
               type='button'
               variants={{ variant: 'outline' }}
               onClick={openCreateKeyModal}
-              buttonProps={{ disabled: isSubmitting }}
+              buttonProps={{ disabled: isSubmitting || !canMutateTranslations }}
               className={traducoesStyles.actionButtonTC}
             >
               <PlusIcon size={14} /> Nova chave
@@ -106,13 +107,18 @@ function Traducoes() {
             <BsButton
               type='button'
               onClick={() => void handleSaveChangedTranslations()}
-              buttonProps={{ disabled: changedEntries.length === 0 || isSubmitting }}
+              buttonProps={{ disabled: changedEntries.length === 0 || isSubmitting || !canMutateTranslations }}
               className={traducoesStyles.actionButtonTC}
             >
               <SaveIcon size={14} /> Salvar ({changedEntries.length})
             </BsButton>
           </BsBox>
         </BsBox>
+        {!canMutateTranslations && (
+          <BsText variants={{ variant: 'small' }} className={traducoesStyles.mutationHintTC}>
+            Edição e criação de chave disponíveis apenas no ambiente dev.
+          </BsText>
+        )}
       </BsBox>
 
       {/* -------------------------------------- */}
@@ -195,6 +201,7 @@ function Traducoes() {
                       <BsInput
                         value={currentValue}
                         onChange={(event) => handleInputChange(row.key, event.target.value)}
+                        disabled={!canMutateTranslations || isSubmitting}
                         className={isChanged ? traducoesStyles.inputChangedTC : traducoesStyles.inputDefaultTC}
                       />
                     </BsBox>

@@ -11,6 +11,7 @@
 
   actionButtonsTC: `flex flex-wrap gap-2`,
   actionButtonTC: `h-8 px-3 text-xs`,
+  mutationHintTC: `mt-2 text-amber-600`,
 
   filtersCardTC: `rounded-xl border border-border/80 bg-card p-3 shadow-sm`,
   filtersRowTC: `flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between`,
