@@ -4,6 +4,33 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*!classe customizada para evitar mudança de layout ao aparecer o scroll*/
+@layer utilities {
+  .scrollbar-stable {
+    scrollbar-gutter: stable;
+  }
+  .scrollbar-stable-both {
+    scrollbar-gutter: stable both-edges;
+  }
+  /* Custom scrollbar para navegadores baseados em Webkit (Chrome, Edge, Safari) */
+  .sidebar-scrollbar-personalizado::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  .sidebar-scrollbar-personalizado::-webkit-scrollbar-thumb {
+    background: #64748b33;
+    border-radius: 8px;
+  }
+  .sidebar-scrollbar-personalizado::-webkit-scrollbar-thumb:hover {
+    background: #64748b66;
+  }
+  /* Firefox */
+  .sidebar-scrollbar-personalizado {
+    scrollbar-width: thin;
+    scrollbar-color: #64748b33 transparent;
+  }
+}
+
 :root {
   --background: #f5f7fa;
   --foreground: #1a2238;

@@ -29,17 +29,23 @@ export function SystemCard({ system, index }: SystemCardProps) {
         onClick={() => setExpanded(!expanded)}
         className={systemCardStyles.buttonTC}
       >
+        {/* -------------------------------------- */}
+        {/* Icone */}
+        {/* -------------------------------------- */}
         <BsBox className={systemCardStyles.innetButtonTC}>
           <ServerIcon size={16} className={systemCardStyles.buttonIconTC} />
         </BsBox>
 
+        {/* -------------------------------------- */}
+        {/* Nome ambiente e barra de progresso */}
+        {/* -------------------------------------- */}
         <BsBox className={systemCardStyles.contentTC}>
           <BsBox className={systemCardStyles.titleRowTC}>
             <BsHeading as='h3' className={systemCardStyles.titleTC}>
               {system.system}
             </BsHeading>
             <BsBox as='span' className={systemCardStyles.envCountTC}>
-              {system.environments.length} env
+              {system.environments.length} ambiente
               {system.environments.length !== 1 ? 's' : ''}
             </BsBox>
           </BsBox>
@@ -53,7 +59,11 @@ export function SystemCard({ system, index }: SystemCardProps) {
           </BsBox>
         </BsBox>
 
+        {/* -------------------------------------- */}
+        {/* Labels de Translated e Missing */}
+        {/* -------------------------------------- */}
         <BsBox className={systemCardStyles.metricsTC}>
+          {/* translated */}
           <BsBox className={systemCardStyles.metricBlockTC}>
             <BsText as='p' className={systemCardStyles.metricLabelTC}>
               translated
@@ -66,6 +76,7 @@ export function SystemCard({ system, index }: SystemCardProps) {
               </BsBox>
             </BsText>
           </BsBox>
+          {/* missing */}
           <BsBox className={systemCardStyles.metricBlockTC}>
             <BsText as='p' className={systemCardStyles.metricLabelTC}>
               missing
@@ -74,13 +85,10 @@ export function SystemCard({ system, index }: SystemCardProps) {
               {system.missingTerms}
             </BsText>
           </BsBox>
+          {/* icon chevron */}
           <motion.span
-            animate={{
-              rotate: expanded ? 180 : 0,
-            }}
-            transition={{
-              duration: 0.2,
-            }}
+            animate={{ rotate: expanded ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
             className={systemCardStyles.chevronTC}
           >
             <ChevronDownIcon size={18} />
@@ -100,7 +108,7 @@ export function SystemCard({ system, index }: SystemCardProps) {
           >
             <BsBox className={systemCardStyles.expandedContentTC}>
               {system.environments.map((env, i) => (
-                <EnvironmentSection key={env.environment} environment={env} index={i} />
+                <EnvironmentSection key={env.environment} environment={env} index={i} systemName={system.system} />
               ))}
             </BsBox>
           </motion.div>
