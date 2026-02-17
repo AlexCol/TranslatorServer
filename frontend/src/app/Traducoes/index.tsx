@@ -72,6 +72,7 @@ function Traducoes() {
         <BsBox className={traducoesStyles.heroGlowTC} />
 
         <BsBox className={traducoesStyles.heroContentTC}>
+          {/* Estrutura do header */}
           <BsBox className={traducoesStyles.heroTitleWrapTC}>
             <BsText className={traducoesStyles.heroTitleTC}>Editor de Traducoes</BsText>
             <BsBox className={traducoesStyles.badgesRowTC}>
@@ -82,6 +83,7 @@ function Traducoes() {
             </BsBox>
           </BsBox>
 
+          {/* Botoes de acao */}
           <BsBox className={traducoesStyles.actionButtonsTC}>
             <BsButton
               type='button'
