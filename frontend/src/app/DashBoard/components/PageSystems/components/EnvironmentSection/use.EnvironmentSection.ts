@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import environmentSectionStyles from './environment-section.styles';
 import type { EnvironmentSectionProps } from '.';
+import { getCdnPublisher } from '@/services/generated/cdn-publisher/cdn-publisher';
 import { getPublisher } from '@/services/generated/publisher/publisher';
 
 export function useEnvironmentSection(props: EnvironmentSectionProps) {
@@ -9,6 +10,7 @@ export function useEnvironmentSection(props: EnvironmentSectionProps) {
   const [isPublishAllModalOpen, setIsPublishAllModalOpen] = useState(false);
   const [selectedEnvironment, setSelectedEnvironment] = useState('');
   const [isPublishingAll, setIsPublishingAll] = useState(false);
+  const [isPublishingCdn, setIsPublishingCdn] = useState(false);
 
   const actualPercentage =
     environment.totalTerms > 0 ? Math.round((environment.translatedTerms / environment.totalTerms) * 100) : 0;
@@ -58,10 +60,27 @@ export function useEnvironmentSection(props: EnvironmentSectionProps) {
     }
   };
 
+  const handlePublishCdn = async () => {
+    try {
+      setIsPublishingCdn(true);
+      const response = await getCdnPublisher().cdnPublisherControllerPushToCdn({
+        system: systemName,
+        environment: environment.environment,
+      });
+      toast.success(response.data || 'Publicação no CDN concluída com sucesso.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Falha ao publicar no CDN.';
+      toast.error(message);
+    } finally {
+      setIsPublishingCdn(false);
+    }
+  };
+
   return {
     isPublishAllModalOpen,
     selectedEnvironment,
     isPublishingAll,
+    isPublishingCdn,
     actualPercentage,
     dotColor,
     baseLanguageLabel,
@@ -69,6 +88,7 @@ export function useEnvironmentSection(props: EnvironmentSectionProps) {
     openPublishAllModal,
     closePublishAllModal,
     handlePublishAll,
+    handlePublishCdn,
     setSelectedEnvironment,
   };
 }

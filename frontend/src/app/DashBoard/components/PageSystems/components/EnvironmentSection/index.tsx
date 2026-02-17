@@ -22,8 +22,9 @@ export function EnvironmentSection(props: EnvironmentSectionProps) {
   const { environment, index, systemName, availableEnvironments, onRefresh } = props;
   const states = useEnvironmentSection(props);
   const { actualPercentage, dotColor, baseLanguageLabel, destinationEnvironments } = states;
-  const { isPublishAllModalOpen, selectedEnvironment, isPublishingAll } = states;
-  const { openPublishAllModal, closePublishAllModal, handlePublishAll, setSelectedEnvironment } = states;
+  const { isPublishAllModalOpen, selectedEnvironment, isPublishingAll, isPublishingCdn } = states;
+  const { openPublishAllModal, closePublishAllModal, handlePublishAll, handlePublishCdn, setSelectedEnvironment } =
+    states;
 
   return (
     <motion.div
@@ -54,6 +55,15 @@ export function EnvironmentSection(props: EnvironmentSectionProps) {
           buttonProps={{ disabled: destinationEnvironments.length === 0 }}
         >
           <UploadIcon size={12} /> Publicar ambiente
+        </BsButton>
+        <BsButton
+          type='button'
+          variants={{ variant: 'outline' }}
+          onClick={handlePublishCdn}
+          className={environmentSectionStyles.publishCdnButtonTC}
+          buttonProps={{ disabled: isPublishingCdn }}
+        >
+          <UploadIcon size={12} /> {isPublishingCdn ? 'Publicando CDN...' : 'Publicar CDN'}
         </BsButton>
 
         {/* -------------------------------------- */}

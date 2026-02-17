@@ -7,6 +7,7 @@
   nameTC: `font-mono text-sm font-medium text-foreground uppercase tracking-wide`,
   badgeTC: `text-[10px] uppercase tracking-wider text-muted-foreground bg-muted rounded px-1.5 py-0.5 font-medium`,
   publishAllButtonTC: `h-6 px-2 text-[11px] gap-1.5 border-border/60 text-muted-foreground`,
+  publishCdnButtonTC: `h-6 px-2 text-[11px] gap-1.5 border-border/60 text-muted-foreground`,
   summaryRowTC: `ml-auto flex items-center gap-5`,
   statsTC: `flex items-center gap-2 text-[11px] text-muted-foreground tabular-nums`,
   statsHighlightTC: `text-foreground`,
