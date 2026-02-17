@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { LanguageRow } from './components/LanguageRow';
+import { LanguageRow } from '../LanguageRow';
 import environmentSectionStyles from './environment-section.styles';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
 import { BsBox, BsText } from '@/components/singles/BaseComponents';
@@ -70,6 +70,7 @@ export function EnvironmentSection({ environment, index, systemName }: Environme
         </BsBox>
       </BsBox>
 
+      {/* Chamando componente LanguageRow */}
       <BsBox className={environmentSectionStyles.languagesTC}>
         {environment.languages.map((lang) => (
           <LanguageRow
