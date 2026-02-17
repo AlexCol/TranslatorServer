@@ -49,7 +49,10 @@ export default function useSidebar() {
         id: '1',
         label: 'Traduções',
         ordem: 1,
-        children: [{ id: '1-1', label: 'Dashboard', ordem: 1, children: [], href: '/', icon: 'LayoutDashboard' }],
+        children: [
+          { id: '1-1', label: 'Dashboard', ordem: 1, children: [], href: '/', icon: 'LayoutDashboard' },
+          { id: '1-2', label: 'Cadastro', ordem: 2, children: [], href: '/cadastro', icon: 'Pen' },
+        ],
         href: '',
         icon: 'BookType',
       },

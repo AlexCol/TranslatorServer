@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import NotFound from '@/app/_NotFound/not-found';
 import About from '@/app/About';
+import Cadastro from '@/app/Cadastro';
 import { Dashboard } from '@/app/Dashboard';
 import Traducoes from '@/app/Traducoes';
 import Footer from '@/components/layout/Footer/Footer';
@@ -21,6 +22,7 @@ function LoggedRoutes() {
             <Route path='/' element={<Dashboard />} />
             <Route path='/about' element={<About />} />
             <Route path='/traducoes/:system/:environment/:language/:namespace' element={<Traducoes />} />
+            <Route path='/cadastro' element={<Cadastro />} />
             <Route path='/login' element={<Navigate to='/' replace />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
