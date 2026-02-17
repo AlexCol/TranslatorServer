@@ -7,6 +7,7 @@ import type { LanguageData } from '@/app/Dashboard/types';
 import { TSSelect, TSSelectOption } from '@/components/primitives';
 import { BsBox, BsButton, BsText } from '@/components/singles/BaseComponents';
 import { Modal } from '@/components/singles/Modal/Modal';
+import presentLanguage from '@/lib/presentLanguage';
 
 type NamespaceItem = LanguageData['namespaces'][number];
 
@@ -83,7 +84,7 @@ export function NamespaceRow(props: NamespaceRowProps) {
               Namespace: <strong>{namespace.namespace}</strong>
             </BsText>
             <BsText as='p' className={namespaceRowStyles.modalLineTC}>
-              Idioma: <strong>{languageName}</strong>
+              Idioma: <strong>{presentLanguage(languageName)}</strong>
             </BsText>
             <BsText as='p' className={namespaceRowStyles.modalLineTC}>
               Origem: <strong>{environmentName}</strong>
