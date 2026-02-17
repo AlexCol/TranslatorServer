@@ -11,10 +11,13 @@ import type { SystemDiagnostic } from '@/services/generated/models';
 interface SystemCardProps {
   system: SystemDiagnostic;
   index: number;
+  onRefresh: () => Promise<void>;
 }
-export function SystemCard({ system, index }: SystemCardProps) {
+export function SystemCard({ system, index, onRefresh }: SystemCardProps) {
   const [expanded, setExpanded] = useState(false);
   const actualPercentage = system.totalTerms > 0 ? Math.round((system.translatedTerms / system.totalTerms) * 100) : 0;
+  const availableEnvironments = system.environments.map((environment) => environment.environment);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -108,7 +111,14 @@ export function SystemCard({ system, index }: SystemCardProps) {
           >
             <BsBox className={systemCardStyles.expandedContentTC}>
               {system.environments.map((env, i) => (
-                <EnvironmentSection key={env.environment} environment={env} index={i} systemName={system.system} />
+                <EnvironmentSection
+                  key={env.environment}
+                  environment={env}
+                  index={i}
+                  systemName={system.system}
+                  availableEnvironments={availableEnvironments}
+                  onRefresh={onRefresh}
+                />
               ))}
             </BsBox>
           </motion.div>

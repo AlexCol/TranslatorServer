@@ -9,7 +9,7 @@ import LoadingTailwind from '@/components/singles/LoadingTailwind';
 export function Dashboard() {
   //https://www.magicpatterns.com/c/1sp2cj8pgoeupejckezalz
 
-  const { data } = useDashboard();
+  const { data, refetch } = useDashboard();
 
   if (!data) {
     return <LoadingTailwind />;
@@ -26,7 +26,7 @@ export function Dashboard() {
         <PageSummary totals={data.totals} />
 
         {/* Systems */}
-        <PageSystems systems={data.systems} />
+        <PageSystems systems={data.systems} onRefresh={refetch} />
       </BsBox>
     </BsBox>
   );

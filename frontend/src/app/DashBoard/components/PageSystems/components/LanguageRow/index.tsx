@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+﻿import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRightIcon, GlobeIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +13,17 @@ export type LanguageRowProps = {
   language: LanguageData;
   systemName: string;
   environmentName: string;
+  availableEnvironments: string[];
+  onRefresh: () => Promise<void>;
 };
 
-export function LanguageRow({ language, systemName, environmentName }: LanguageRowProps) {
+export function LanguageRow({
+  language,
+  systemName,
+  environmentName,
+  availableEnvironments,
+  onRefresh,
+}: LanguageRowProps) {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const actualPercentage =
@@ -28,7 +36,7 @@ export function LanguageRow({ language, systemName, environmentName }: LanguageR
   return (
     <BsBox className={languageRowStyles.containerTC}>
       {/* -------------------------------------- */}
-      {/* Cabe�alho Clicavel */}
+      {/* Cabeçalho Clicavel */}
       {/* -------------------------------------- */}
       <BsButton
         type='button'
@@ -93,6 +101,12 @@ export function LanguageRow({ language, systemName, environmentName }: LanguageR
                   namespace={namespace}
                   index={i}
                   onClick={handleNamespaceClick}
+                  systemName={systemName}
+                  environmentName={environmentName}
+                  languageName={language.language}
+                  availableEnvironments={availableEnvironments}
+                  onRefresh={onRefresh}
+                  isOnBaseLanguage={language.isBase}
                 />
               ))}
             </BsBox>

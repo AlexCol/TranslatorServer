@@ -10,9 +10,17 @@ interface EnvironmentSectionProps {
   environment: EnvironmentDiagnostic;
   index: number;
   systemName: string;
+  availableEnvironments: string[];
+  onRefresh: () => Promise<void>;
 }
 
-export function EnvironmentSection({ environment, index, systemName }: EnvironmentSectionProps) {
+export function EnvironmentSection({
+  environment,
+  index,
+  systemName,
+  availableEnvironments,
+  onRefresh,
+}: EnvironmentSectionProps) {
   const actualPercentage =
     environment.totalTerms > 0 ? Math.round((environment.translatedTerms / environment.totalTerms) * 100) : 0;
   const dotColor =
@@ -78,6 +86,8 @@ export function EnvironmentSection({ environment, index, systemName }: Environme
             language={lang}
             systemName={systemName}
             environmentName={environment.environment}
+            availableEnvironments={availableEnvironments}
+            onRefresh={onRefresh}
           />
         ))}
       </BsBox>

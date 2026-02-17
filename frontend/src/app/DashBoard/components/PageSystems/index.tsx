@@ -6,9 +6,10 @@ import type { SystemDiagnostic } from '@/services/generated/models';
 
 type PageSystemsProps = {
   systems: SystemDiagnostic[];
+  onRefresh: () => Promise<void>;
 };
 
-function PageSystems({ systems }: PageSystemsProps) {
+function PageSystems({ systems, onRefresh }: PageSystemsProps) {
   return (
     <BsBox as='section' aria-label='Systems breakdown'>
       <BsHeading as='h2' className={pageSystemsStyles.headingTC}>
@@ -16,7 +17,7 @@ function PageSystems({ systems }: PageSystemsProps) {
       </BsHeading>
       <BsBox className={pageSystemsStyles.listTC}>
         {systems.map((system, i) => (
-          <SystemCard key={system.system} system={system} index={i} />
+          <SystemCard key={system.system} system={system} index={i} onRefresh={onRefresh} />
         ))}
       </BsBox>
     </BsBox>
