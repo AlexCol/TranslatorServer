@@ -15,6 +15,4 @@ const mainTailwindClass = `
   flex-1
   min-h-0
   overflow-y-auto
-  sidebar-scrollbar-personalizado
-  scrollbar-stable
 `;
