@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class PublishNamespaceDto {
   @ApiProperty()
@@ -29,12 +29,10 @@ export class PublishNamespaceDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsIn(['dev', 'prod'], { message: 'from must be one of: dev, prod' })
   from: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsIn(['dev', 'prod'], { message: 'to must be one of: dev, prod' })
   to: string;
 }
