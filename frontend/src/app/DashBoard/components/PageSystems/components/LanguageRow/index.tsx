@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRightIcon, GlobeIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { NamespaceRow } from '../NamespaceRow';
 import languageRowStyles from './language-row.styles';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
 import type { LanguageData } from '@/app/Dashboard/types';
@@ -27,7 +28,7 @@ export function LanguageRow({ language, systemName, environmentName }: LanguageR
   return (
     <BsBox className={languageRowStyles.containerTC}>
       {/* -------------------------------------- */}
-      {/* Cabeçalho Clicavel */}
+      {/* Cabe�alho Clicavel */}
       {/* -------------------------------------- */}
       <BsButton
         type='button'
@@ -86,43 +87,14 @@ export function LanguageRow({ language, systemName, environmentName }: LanguageR
             className={languageRowStyles.expandMotionTC}
           >
             <BsBox className={languageRowStyles.expandContentTC}>
-              {language.namespaces.map((ns, i) => {
-                const nsPercentage = ns.totalTerms > 0 ? Math.round((ns.translatedTerms / ns.totalTerms) * 100) : 0;
-                return (
-                  <motion.div
-                    key={ns.namespace}
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.15, delay: i * 0.04 }}
-                    className={languageRowStyles.namespaceRowTC}
-                  >
-                    {/* pontinho - como que mostrar lista */}
-                    <BsBox as='span' className={languageRowStyles.namespaceDotTC} />
-
-                    {/* Label do namespace, clicavel */}
-                    <BsBox
-                      as='span'
-                      className={languageRowStyles.namespaceNameTC}
-                      elementProps={{
-                        onClick: () => {
-                          handleNamespaceClick(ns.namespace);
-                        },
-                      }}
-                    >
-                      {ns.namespace}
-                    </BsBox>
-
-                    {/* Barra de progresso */}
-                    <BsBox className={languageRowStyles.namespaceProgressTC}>
-                      <ProgressBar percentage={nsPercentage} size='sm' />
-                    </BsBox>
-                    {/* Total */}
-                    <BsBox as='span' className={languageRowStyles.namespaceTotalTC}>
-                      {ns.translatedTerms}/{ns.totalTerms}
-                    </BsBox>
-                  </motion.div>
-                );
-              })}
+              {language.namespaces.map((namespace, i) => (
+                <NamespaceRow
+                  key={namespace.namespace}
+                  namespace={namespace}
+                  index={i}
+                  onClick={handleNamespaceClick}
+                />
+              ))}
             </BsBox>
           </motion.div>
         )}
