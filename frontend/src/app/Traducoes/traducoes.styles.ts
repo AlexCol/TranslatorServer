@@ -36,7 +36,9 @@
 
   bodyRowTC: `align-top odd:bg-background even:bg-muted/15 hover:bg-transparent`,
   cellTC: `px-3 py-2.5 align-top`,
+  keyRowTC: `flex items-start gap-2`,
   keyTextTC: `font-mono text-[12px] leading-5 break-all text-foreground`,
+  deleteKeyButtonTC: `h-7 px-2 text-destructive border-destructive/30`,
   fallbackTextTC: `text-[12px] leading-5 whitespace-pre-wrap break-words text-muted-foreground`,
   inputWrapTC: `space-y-1`,
   inputDefaultTC: `bg-background`,

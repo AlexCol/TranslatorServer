@@ -2,6 +2,7 @@
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { envConfig } from '@/envConfig';
+import { getLanguage } from '@/services/generated/language/language';
 import { getTranslations } from '@/services/generated/translations/translations';
 
 type TranslationJson = Record<string, string | null | undefined>;
@@ -33,6 +34,7 @@ export default function useTraducoes() {
 
   const [rows, setRows] = useState<TranslationRow[]>([]);
   const [editedValues, setEditedValues] = useState<Record<string, string>>({});
+  const [baseLanguage, setBaseLanguage] = useState<string | null>(null);
 
   const [isCreateKeyModalOpen, setIsCreateKeyModalOpen] = useState(false);
   const [newKey, setNewKey] = useState('');
@@ -40,6 +42,7 @@ export default function useTraducoes() {
 
   const hasValidParams = Boolean(system && environment && language && namespace);
   const canMutateTranslations = environment === envConfig.devEnvironment;
+  const isOnBaseLanguage = Boolean(language && baseLanguage && language === baseLanguage);
 
   /******************************************************/
   /* Carregamento de traducoes                          */
@@ -57,14 +60,16 @@ export default function useTraducoes() {
       }
 
       try {
-        const [withFallback, withoutFallback] = await Promise.all([
+        const [withFallback, withoutFallback, baseLanguageResponse] = await Promise.all([
           getTranslations().translationsControllerLoadWithFallBack(system, environment, language, namespace),
           getTranslations().translationsControllerLoadWithoutFallBack(system, environment, language, namespace),
+          getLanguage().languageControllerGetBaseLanguage(system, environment),
         ]);
 
         const mergedRows = mergeTranslations(withFallback as TranslationJson, withoutFallback as TranslationJson);
         setRows(mergedRows);
         setEditedValues({});
+        setBaseLanguage(baseLanguageResponse?.data || null);
         setPage(1);
       } catch {
         toast.error('Falha ao carregar traducoes.');
@@ -238,6 +243,32 @@ export default function useTraducoes() {
     }
   };
 
+  const handleDeleteKey = async (key: string) => {
+    if (!system || !namespace) {
+      return;
+    }
+    if (!canMutateTranslations) {
+      toast.error('Exclusão de chave permitida apenas no ambiente dev.');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await getTranslations().translationsControllerDeleteKey({
+        system,
+        namespace,
+        keys: [key],
+      });
+
+      toast.success('Chave removida com sucesso.');
+      await fetchTranslations(true);
+    } catch {
+      toast.error('Falha ao remover chave.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   /******************************************************/
   /* API publica do hook                                */
   /******************************************************/
@@ -260,6 +291,7 @@ export default function useTraducoes() {
     isSubmitting,
     hasValidParams,
     canMutateTranslations,
+    isOnBaseLanguage,
     totalPages,
     pageSizeOptions: PAGE_SIZE_OPTIONS,
     paginatedRows,
@@ -275,6 +307,7 @@ export default function useTraducoes() {
     toggleSort,
     handleInputChange,
     handleSaveChangedTranslations,
+    handleDeleteKey,
     openCreateKeyModal,
     closeCreateKeyModal,
     handleCreateNewKey,
@@ -298,4 +331,5 @@ function stringifyTranslationValue(value: string | null | undefined): string {
 
   return String(value);
 }
+
 

@@ -1,4 +1,4 @@
-﻿import { CheckIcon, FileTextIcon, PlusIcon, RefreshCwIcon, SaveIcon, SearchIcon } from 'lucide-react';
+﻿import { CheckIcon, FileTextIcon, PlusIcon, RefreshCwIcon, SaveIcon, SearchIcon, Trash2Icon } from 'lucide-react';
 import { InfoBadge, SortHeader, StatPill } from './components';
 import traducoesStyles from './traducoes.styles';
 import useTraducoes from './useTraducoes';
@@ -37,6 +37,7 @@ function Traducoes() {
     isSubmitting,
     hasValidParams,
     canMutateTranslations,
+    isOnBaseLanguage,
     totalPages,
     pageSizeOptions,
     paginatedRows,
@@ -52,6 +53,7 @@ function Traducoes() {
     toggleSort,
     handleInputChange,
     handleSaveChangedTranslations,
+    handleDeleteKey,
     openCreateKeyModal,
     closeCreateKeyModal,
     handleCreateNewKey,
@@ -190,7 +192,24 @@ function Traducoes() {
               return (
                 <BsTableRow key={row.key} className={traducoesStyles.bodyRowTC}>
                   <BsTableCell className={traducoesStyles.cellTC}>
-                    <BsText className={traducoesStyles.keyTextTC}>{row.key}</BsText>
+                    <BsBox className={traducoesStyles.keyRowTC}>
+                      <BsText className={traducoesStyles.keyTextTC}>{row.key}</BsText>
+                      {isOnBaseLanguage && canMutateTranslations && (
+                        <BsButton
+                          type='button'
+                          variants={{ variant: 'outline' }}
+                          onClick={() => {
+                            if (window.confirm(`Excluir chave "${row.key}"?`)) {
+                              void handleDeleteKey(row.key);
+                            }
+                          }}
+                          buttonProps={{ disabled: !canMutateTranslations || isSubmitting }}
+                          className={traducoesStyles.deleteKeyButtonTC}
+                        >
+                          <Trash2Icon size={12} />
+                        </BsButton>
+                      )}
+                    </BsBox>
                   </BsTableCell>
 
                   <BsTableCell className={traducoesStyles.cellTC}>
@@ -325,3 +344,6 @@ function Traducoes() {
 }
 
 export default Traducoes;
+
+
+
