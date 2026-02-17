@@ -1,4 +1,5 @@
 import { BunnyStorage } from './bunny/bunny-storage';
+import { FileSystemStorage } from './file-system/file-system-storage';
 import envConfig from '@/env.config';
 
 export function buildCdnPublisher() {
@@ -10,6 +11,11 @@ export function buildCdnPublisher() {
       envConfig.cdn.bunny.storageName,
       envConfig.cdn.bunny.translationsPath,
     );
+    return provider;
+  }
+
+  if (providerName === 'filesystem') {
+    const provider = new FileSystemStorage(envConfig.cdn.filesystem.basePath);
     return provider;
   }
 

@@ -39,6 +39,9 @@ const envConfig = {
       storageName: process.env.BUNNY_STORAGE_NAME || '',
       translationsPath: process.env.BUNNY_TRANSLATIONS_PATH || '',
     },
+    filesystem: {
+      basePath: process.env.FILESYSTEM_BASE_PATH || '',
+    },
   },
 };
 export default envConfig;
