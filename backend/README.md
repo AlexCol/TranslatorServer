@@ -1,112 +1,83 @@
 # Backend - Translator Server
 
-API para gerenciamento de catalogos de traducao por sistema, ambiente, idioma e namespace.
+API para catalogos de traducao por `sistema`, `ambiente`, `idioma` e `namespace`.
 
-## O que este backend faz
-- Expoe API HTTP (NestJS + Fastify) para CRUD de sistemas, ambientes, idiomas, namespaces e traducoes.
-- Entrega traducoes com ou sem fallback para idioma base.
-- Publica namespaces entre ambientes (ex.: `dev` -> `prod`).
-- Faz autenticacao por provider (`mock` ou `redmine`) e controle de sessao via cookie.
-- Publica arquivos JSON de traducao em CDN (provider atual: Bunny Storage).
-- Gera documentacao de API via Scalar/Swagger.
-
-## Stack e tecnologias
-- Node.js + TypeScript
+## Stack
 - NestJS 11
 - Fastify
+- TypeScript
 - Knex
-- SQLite3
+- SQLite
 - class-validator / class-transformer
-- Swagger + Scalar API Reference
-- Throttling (`@nestjs/throttler`)
-- Bunny Storage SDK
+- Swagger + Scalar
 
-## Como executar localmente
-1. Entre na pasta:
-```bash
-cd backend
-```
-2. Instale dependencias:
+## Requisitos
+- Node.js 20+
+- npm 10+
+
+## Como rodar
+1. Instale dependencias
 ```bash
 npm install
 ```
-3. Crie o `.env` a partir de `backend/.env copy`.
-4. Execute migracoes:
+
+2. Configure variaveis
+```bash
+cp ".env copy" .env
+```
+
+3. Rode migracoes
 ```bash
 npm run migrate:all
 ```
-5. Rode em desenvolvimento:
+
+4. Inicie em desenvolvimento
 ```bash
 npm run dev
 ```
 
 Servidor padrao: `http://localhost:3000`
 
-## Variaveis de ambiente
-Principais variaveis usadas no projeto:
+## Variaveis de ambiente principais
+Arquivo base: `.env copy`.
 
-- `NODE_ENV` (`development` | `production` | `test`)
-- `PORT` (opcional, default `3000`)
-- `AUTH_PROVIDER` (`mock` | `redmine`)
-- `SESSION_TTL` (segundos, default `604800`)
-- `COOKIE_SECRET` (obrigatorio em producao)
-- `REDMINE_URL` (quando `AUTH_PROVIDER=redmine`)
-- `ALLOWED_ORIGINS` (lista separada por virgula em producao)
-- `TRANSLATIONS_PROVIDER` (atual: `database`)
-- `TRANSLATIONS_CACHE_TTL` (segundos)
-- `CND_PROVIDER` (atual: `bunny`)
-- `BUNNY_KEY`
-- `BUNNY_STORAGE_NAME`
-- `BUNNY_TRANSLATIONS_PATH`
-- `SQLITE_DB_PATH` (opcional; se nao informar usa o `app.db` local do modulo sqlite)
+- `NODE_ENV`: `development | production | test`
+- `PORT`: porta da API (default 3000)
+- `AUTH_PROVIDER`: `mock | redmine`
+- `SESSION_TTL`: TTL de sessao em segundos
+- `COOKIE_SECRET`: obrigatorio em producao
+- `REDMINE_URL`: necessario se `AUTH_PROVIDER=redmine`
+- `TRANSLATIONS_PROVIDER`: provider de traducoes (atual `database`)
+- `TRANSLATIONS_CACHE_TTL`: TTL de cache de traducoes
+- `ALLOWED_ORIGINS`: origens permitidas para CORS
+- `CDN_PROVIDER`: `filesystem | bunny`
+- `BUNNY_KEY`, `BUNNY_STORAGE_NAME`, `BUNNY_TRANSLATIONS_PATH`: config do Bunny
+- `FILESYSTEM_BASE_PATH`: base de escrita para provider local de CDN
 
-## Scripts disponiveis
-- `npm run dev` - sobe em watch mode
-- `npm run debug` - sobe em watch + debug
-- `npm run build` - build de producao
-- `npm run prod` - executa `dist/main`
-- `npm run lint` - lint com autofix
-- `npm run format` - formatacao com Prettier
-- `npm run migrate:c` - cria migration
-- `npm run migrate:all` - aplica migrations pendentes
+## Scripts
+- `npm run dev`: aplica migracoes e sobe em watch
+- `npm run debug`: sobe em debug + watch
+- `npm run build`: build de producao
+- `npm run prod`: executa `dist/main`
+- `npm run lint`: lint + fix
+- `npm run format`: prettier
+- `npm run migrate:c`: cria migration
+- `npm run migrate:all`: aplica migrations pendentes
 
-## Prefixo e documentacao da API
+## Endpoints e docs
 - Prefixo global: `/api`
-- Health check: `GET /api`
-- Docs interativas (Scalar): `/api/docs`
+- Health: `GET /api`
+- Docs interativas: `/api/docs`
 - OpenAPI JSON: `/swagger/json`
 - OpenAPI YAML: `/swagger/yaml`
 
 ## Modulos principais
-- `auth` - login/logout, guard de sessao e providers de autenticacao.
-- `session` - criacao, refresh e invalidacao de sessao.
-- `core-translations` - dominio principal de traducao.
-- `cdn-publisher` - upload das traducoes para CDN.
-- `infra` - cache e banco (Knex + SQLite).
-- `throttler` - rate limit global.
-
-## Rotas de alto nivel
-- `auth/*`
-- `system/*`
-- `environment/*`
-- `languages/*`
-- `namespaces/*`
-- `translations/*`
-- `publisher/*`
-- `cdn-publisher/*`
-
-## Links uteis
-- NestJS: https://docs.nestjs.com/
-- Fastify: https://fastify.dev/docs/latest/
-- Knex: https://knexjs.org/
-- SQLite: https://www.sqlite.org/docs.html
-- Class Validator: https://github.com/typestack/class-validator
-- Swagger (Nest): https://docs.nestjs.com/openapi/introduction
-- Scalar API Reference: https://guides.scalar.com/scalar/scalar-api-references/integrations/nestjs
-- Bunny Storage API: https://docs.bunny.net/docs/storage-zone-api-overview
-- Redmine REST API: https://www.redmine.org/projects/redmine/wiki/Rest_api
+- `auth`: autenticacao e sessao
+- `session`: gerencia ciclo de vida de sessao
+- `core-translations`: sistema/ambiente/idioma/namespace/traducoes/publicacao
+- `cdn-publisher`: push para CDN
+- `infra`: banco, cache e adaptadores
 
 ## Observacoes
-- Em producao, `AUTH_PROVIDER=mock` e bloqueado pelo backend.
-- Em producao, configure `COOKIE_SECRET`.
-- O fluxo de edicao de catalogo e centrado em `dev`, com publicacao para outros ambientes.
+- Em producao, `AUTH_PROVIDER=mock` e bloqueado.
+- O fluxo de edicao normalmente acontece no ambiente configurado como desenvolvimento no frontend.
