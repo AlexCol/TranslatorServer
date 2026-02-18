@@ -5,7 +5,13 @@
  * API para gerenciamento de traduções.
  * OpenAPI spec version: 1.0
  */
-import type { CreateKeyDto, CreateTranslationDto, TranslationStatusDto, _ } from '.././models';
+import type {
+  CreateKeyDto,
+  CreateTranslationDto,
+  TranslationStatusDto,
+  TranslationsControllerLoadWithFallBack200,
+  TranslationsControllerLoadWithoutFallBack200,
+} from '.././models';
 
 import { apiClient } from '../../api-mutator';
 
@@ -20,7 +26,10 @@ export const getTranslations = () => {
     language: string,
     namespace: string,
   ) => {
-    return apiClient<_>({ url: `/api/translations/${system}/${environment}/${language}/${namespace}`, method: 'GET' });
+    return apiClient<TranslationsControllerLoadWithFallBack200>({
+      url: `/api/translations/${system}/${environment}/${language}/${namespace}`,
+      method: 'GET',
+    });
   };
   /**
    * Returns translations for the specified system, environment, language, and namespace without fallback. Only returns translations that exist for the specified language.
@@ -32,7 +41,7 @@ export const getTranslations = () => {
     language: string,
     namespace: string,
   ) => {
-    return apiClient<_>({
+    return apiClient<TranslationsControllerLoadWithoutFallBack200>({
       url: `/api/translations/${system}/${environment}/${language}/${namespace}/clean`,
       method: 'GET',
     });

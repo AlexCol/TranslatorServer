@@ -3,7 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { AuthenticationService } from './authentication.service';
 import { IsPublic } from './decorators/isPublic';
 import { LoginDto } from './dto/login.dto';
-import addSessionCookie from './functions/addSessionCookie';
+import addSessionCookie, { getSessionCookieOptions } from './functions/addSessionCookie';
 import { StringResponseDto } from '@/common/dto/MessageResponseDto';
 import { ApiDoc } from '@/decorators/api-doc/api-doc';
 import { SessionPayload } from '@/modules/session/dto/SessionPayload';
@@ -53,7 +53,7 @@ export class AuthenticationController {
       await this.sessionService.deleteSession(sessionToken);
     }
 
-    res.clearCookie('sessionToken');
+    res.clearCookie('sessionToken', getSessionCookieOptions());
 
     const response: StringResponseDto = { data: 'Logout successful' };
     return response;
@@ -80,7 +80,7 @@ export class AuthenticationController {
 
       return sessionData.payload;
     } catch (error) {
-      res.clearCookie('sessionToken');
+      res.clearCookie('sessionToken', getSessionCookieOptions());
       throw error;
     }
   }

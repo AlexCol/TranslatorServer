@@ -25,6 +25,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["vite.config.ts", "*.config.js", "*.config.ts", "src/**/*"],
+  "include": ["vite.config.ts", "*.config.js", "*.config.ts"],
   "exclude": ["node_modules", "dist", "build", "out", ".next", "next-env.d.ts", "src/components/ui/**/*"]
 }

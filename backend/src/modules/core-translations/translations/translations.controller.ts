@@ -27,7 +27,13 @@ export class TranslationsController {
       { name: 'language', description: paramsDescription.language, required: true, type: 'string' },
       { name: 'namespace', description: paramsDescription.namespace, required: true, type: 'string' },
     ],
-    response: { type: 'object', example: { key1: 'Translation for key1', key2: 'Translation for key2' } },
+    response: {
+      schema: {
+        type: 'object',
+        additionalProperties: { type: 'string' },
+        example: { key1: 'Translation for key1', key2: 'Translation for key2' },
+      },
+    },
   })
   @Get(':system/:environment/:language/:namespace')
   async loadWithFallBack(
@@ -50,7 +56,13 @@ export class TranslationsController {
       { name: 'language', description: paramsDescription.language, required: true, type: 'string' },
       { name: 'namespace', description: paramsDescription.namespace, required: true, type: 'string' },
     ],
-    response: { type: 'object', example: { key1: 'Translation for key1', key2: null } },
+    response: {
+      schema: {
+        type: 'object',
+        additionalProperties: { type: 'string', nullable: true },
+        example: { key1: 'Translation for key1', key2: null },
+      },
+    },
   })
   @Get(':system/:environment/:language/:namespace/clean')
   async loadWithoutFallBack(

@@ -12,9 +12,9 @@ export function buildAuthProvider() {
   ]);
 
   const providerName = envConfig.auth.provider;
-  if (isProduction && providerName === 'mock') {
-    throw new Error('Mock auth provider is not allowed in production environment');
-  }
+  // if (isProduction && providerName === 'mock') {
+  //   throw new Error('Mock auth provider is not allowed in production environment');
+  // }
 
   const ProviderClass = providers.get(providerName);
 

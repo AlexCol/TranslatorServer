@@ -26,4 +26,6 @@ export * from './sessionPayload';
 export * from './stringResponseDto';
 export * from './systemDiagnostic';
 export * from './systemDto';
+export * from './translationsControllerLoadWithFallBack200';
+export * from './translationsControllerLoadWithoutFallBack200';
 export * from './translationStatusDto';
