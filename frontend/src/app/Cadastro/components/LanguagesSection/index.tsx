@@ -22,23 +22,10 @@ type LanguagesSectionProps = {
   demoting: boolean;
 };
 
-export function LanguagesSection({
-  languages,
-  selectedSystem,
-  selectedEnvironment,
-  selectedLanguage,
-  baseLanguage,
-  onEnter,
-  onCreate,
-  onDelete,
-  onPromote,
-  onDemote,
-  loading,
-  creating,
-  deleting,
-  promoting,
-  demoting,
-}: LanguagesSectionProps) {
+export function LanguagesSection(props: LanguagesSectionProps) {
+  const { languages, selectedSystem, selectedEnvironment, selectedLanguage, baseLanguage } = props;
+  const { onEnter, onCreate, onDelete, onPromote, onDemote } = props;
+  const { loading, creating, deleting, promoting, demoting } = props;
   const { newLanguage, setNewLanguage, canCreate, handleCreate } = useLanguagesSection({ onCreate });
 
   const canMutate = Boolean(selectedSystem && selectedEnvironment);
@@ -152,5 +139,3 @@ export function LanguagesSection({
     </BsBox>
   );
 }
-
-

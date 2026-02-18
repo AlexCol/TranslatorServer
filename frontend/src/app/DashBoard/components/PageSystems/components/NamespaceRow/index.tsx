@@ -103,7 +103,7 @@ export function NamespaceRow(props: NamespaceRowProps) {
               disabled={destinationEnvironments.length === 0 || isPublishing}
             >
               {destinationEnvironments.length === 0 && (
-                <TSSelectOption value=''>Sem destinos dispon�veis</TSSelectOption>
+                <TSSelectOption value=''>Sem destinos disponíveis</TSSelectOption>
               )}
               {destinationEnvironments.map((environment) => (
                 <TSSelectOption key={environment} value={environment}>

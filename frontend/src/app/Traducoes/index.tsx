@@ -1,5 +1,5 @@
-import { memo, useEffect, useState } from 'react';
 import { CheckIcon, FileTextIcon, PlusIcon, RefreshCwIcon, SaveIcon, SearchIcon, Trash2Icon } from 'lucide-react';
+import { memo, useEffect, useState } from 'react';
 import { InfoBadge, SortHeader, StatPill } from './components';
 import traducoesStyles from './traducoes.styles';
 import useTraducoes from './useTraducoes';
@@ -53,46 +53,14 @@ const EditableLanguageInput = memo(function EditableLanguageInput({
 });
 
 function Traducoes() {
-  const {
-    system,
-    environment,
-    language,
-    namespace,
-    loading,
-    refreshing,
-    filter,
-    sortField,
-    sortDirection,
-    page,
-    pageSize,
-    rows,
-    changedCount,
-    inputResetVersion,
-    isCreateKeyModalOpen,
-    newKey,
-    isSubmitting,
-    hasValidParams,
-    canMutateTranslations,
-    isOnBaseLanguage,
-    totalPages,
-    pageSizeOptions,
-    paginatedRows,
-    filteredSortedRows,
-    rangeStart,
-    rangeEnd,
-    setFilter,
-    setPage,
-    setPageSize,
-    setNewKey,
-    fetchTranslations,
-    toggleSort,
-    handleInputChange,
-    handleSaveChangedTranslations,
-    handleDeleteKey,
-    openCreateKeyModal,
-    closeCreateKeyModal,
-    handleCreateNewKey,
-  } = useTraducoes();
+  const states = useTraducoes();
+  const { system, environment, language, namespace, loading, refreshing, filter, sortField, sortDirection } = states;
+  const { page, pageSize, rows, changedCount, inputResetVersion, isCreateKeyModalOpen, newKey } = states;
+  const { isSubmitting, hasValidParams, canMutateTranslations, isOnBaseLanguage, totalPages, pageSizeOptions } = states;
+  const { paginatedRows, filteredSortedRows, rangeStart, rangeEnd } = states;
+  const { setFilter, setPage, setPageSize, setNewKey, fetchTranslations, toggleSort } = states;
+  const { handleInputChange, handleSaveChangedTranslations, handleDeleteKey, openCreateKeyModal } = states;
+  const { closeCreateKeyModal, handleCreateNewKey } = states;
 
   if (!hasValidParams) {
     return <BsText variants={{ variant: 'error' }}>Parametros invalidos para carregar traducoes.</BsText>;
@@ -154,7 +122,7 @@ function Traducoes() {
         </BsBox>
         {!canMutateTranslations && (
           <BsText variants={{ variant: 'small' }} className={traducoesStyles.mutationHintTC}>
-            Edição e criação de chave disponíveis apenas no ambiente {envConfig.devEnvironment}.
+            EdiÃ§Ã£o e criaÃ§Ã£o de chave disponÃ­veis apenas no ambiente {envConfig.devEnvironment}.
           </BsText>
         )}
       </BsBox>

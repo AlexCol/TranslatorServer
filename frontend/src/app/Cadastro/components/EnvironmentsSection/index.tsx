@@ -15,17 +15,11 @@ type EnvironmentsSectionProps = {
   deleting: boolean;
 };
 
-export function EnvironmentsSection({
-  environments,
-  selectedSystem,
-  selectedEnvironment,
-  onEnter,
-  onCreate,
-  onDelete,
-  loading,
-  creating,
-  deleting,
-}: EnvironmentsSectionProps) {
+export function EnvironmentsSection(props: EnvironmentsSectionProps) {
+  const { environments, selectedSystem, selectedEnvironment } = props;
+  const { onEnter, onCreate, onDelete } = props;
+  const { loading, creating, deleting } = props;
+
   const { newEnvironment, setNewEnvironment, canCreate, handleCreate } = useEnvironmentsSection({ onCreate });
 
   return (
@@ -59,7 +53,9 @@ export function EnvironmentsSection({
       <BsBox className={environmentsSectionStyles.listTC}>
         {loading && <BsBox className={environmentsSectionStyles.emptyTC}>Carregando...</BsBox>}
 
-        {!loading && !selectedSystem && <BsBox className={environmentsSectionStyles.emptyTC}>Sem sistema selecionado.</BsBox>}
+        {!loading && !selectedSystem && (
+          <BsBox className={environmentsSectionStyles.emptyTC}>Sem sistema selecionado.</BsBox>
+        )}
 
         {!loading && selectedSystem && environments.length === 0 && (
           <BsBox className={environmentsSectionStyles.emptyTC}>Nenhum ambiente.</BsBox>
@@ -99,4 +95,3 @@ export function EnvironmentsSection({
     </BsBox>
   );
 }
-

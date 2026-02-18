@@ -2,7 +2,7 @@
 import { ArrowRightIcon, UploadIcon } from 'lucide-react';
 import { LanguageRow } from '../LanguageRow';
 import environmentSectionStyles from './environment-section.styles';
-import { useEnvironmentSection } from './use.EnvironmentSection';
+import { useEnvironmentSection } from './useEnvironmentSection';
 import { ProgressBar } from '@/app/Dashboard/components/ProgressBar';
 import { TSSelect, TSSelectOption } from '@/components/primitives';
 import { BsBox, BsButton, BsText } from '@/components/singles/BaseComponents';

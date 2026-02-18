@@ -116,8 +116,7 @@ export default function useTraducoes() {
 
     const sorted = [...filtered].sort((a, b) => {
       const left = sortField === 'key' ? a.key : sortField === 'fallback' ? a.fallbackValue : a.languageOriginalValue;
-      const right =
-        sortField === 'key' ? b.key : sortField === 'fallback' ? b.fallbackValue : b.languageOriginalValue;
+      const right = sortField === 'key' ? b.key : sortField === 'fallback' ? b.fallbackValue : b.languageOriginalValue;
 
       const comparison = left.localeCompare(right, undefined, { sensitivity: 'base' });
       return sortDirection === 'asc' ? comparison : -comparison;
@@ -179,7 +178,7 @@ export default function useTraducoes() {
       return;
     }
     if (!canMutateTranslations) {
-      toast.error('Salvar traduÁ„o permitido apenas no ambiente dev.');
+      toast.error('Salvar tradu√ß√£o permitido apenas no ambiente dev.');
       return;
     }
 
@@ -228,7 +227,7 @@ export default function useTraducoes() {
       return;
     }
     if (!canMutateTranslations) {
-      toast.error('CriaÁ„o de chave permitida apenas no ambiente dev.');
+      toast.error('Cria√ß√£o de chave permitida apenas no ambiente dev.');
       return;
     }
 
@@ -261,7 +260,7 @@ export default function useTraducoes() {
       return;
     }
     if (!canMutateTranslations) {
-      toast.error('Exclus„o de chave permitida apenas no ambiente dev.');
+      toast.error('Exclus√£o de chave permitida apenas no ambiente dev.');
       return;
     }
 

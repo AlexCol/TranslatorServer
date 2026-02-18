@@ -4,31 +4,13 @@ import useCadastro from './useCadastro';
 import { BsBox, BsText } from '@/components/singles/BaseComponents';
 
 function Cadastro() {
-  const {
-    systems,
-    environments,
-    languages,
-    namespaces,
-    selectedSystem,
-    selectedEnvironment,
-    selectedLanguage,
-    baseLanguage,
-    busyActions,
-    enterSystem,
-    enterEnvironment,
-    enterLanguage,
-    openNamespaceTranslations,
-    createSystem,
-    deleteSystem,
-    createEnvironment,
-    deleteEnvironment,
-    createLanguage,
-    deleteLanguage,
-    promoteLanguage,
-    demoteBaseLanguage,
-    createNamespace,
-    deleteNamespace,
-  } = useCadastro();
+  const states = useCadastro();
+  const { systems, environments, languages, namespaces, selectedSystem, selectedEnvironment } = states;
+  const { selectedLanguage, baseLanguage, busyActions } = states;
+  const { enterSystem, enterEnvironment, enterLanguage, openNamespaceTranslations } = states;
+  const { createSystem, deleteSystem, createEnvironment, deleteEnvironment } = states;
+  const { createLanguage, deleteLanguage } = states;
+  const { promoteLanguage, demoteBaseLanguage, createNamespace, deleteNamespace } = states;
 
   return (
     <BsBox as='main' className={cadastroStyles.pageTC}>
@@ -107,4 +89,3 @@ function Cadastro() {
 }
 
 export default Cadastro;
-

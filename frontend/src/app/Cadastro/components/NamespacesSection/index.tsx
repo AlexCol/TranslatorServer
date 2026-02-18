@@ -17,18 +17,11 @@ type NamespacesSectionProps = {
   deleting: boolean;
 };
 
-export function NamespacesSection({
-  namespaces,
-  selectedSystem,
-  selectedEnvironment,
-  selectedLanguage,
-  onOpen,
-  onCreate,
-  onDelete,
-  loading,
-  creating,
-  deleting,
-}: NamespacesSectionProps) {
+export function NamespacesSection(props: NamespacesSectionProps) {
+  const { namespaces, selectedSystem, selectedEnvironment, selectedLanguage } = props;
+  const { onOpen, onCreate, onDelete } = props;
+  const { loading, creating, deleting } = props;
+
   const { newNamespace, setNewNamespace, canCreate, handleCreate } = useNamespacesSection({ onCreate });
 
   const canMutate = Boolean(selectedSystem && selectedEnvironment && selectedLanguage);
@@ -106,5 +99,3 @@ export function NamespacesSection({
     </BsBox>
   );
 }
-
-

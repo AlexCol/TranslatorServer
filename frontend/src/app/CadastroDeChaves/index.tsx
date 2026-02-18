@@ -5,31 +5,12 @@ import { BsBox, BsButton, BsText } from '@/components/singles/BaseComponents';
 import { BsTextArea } from '@/components/singles/BaseComponents/BsTextArea';
 
 function CadastroDeChaves() {
-  const {
-    systems,
-    languages,
-    namespaces,
-    selectedSystem,
-    selectedLanguage,
-    selectedNamespace,
-    baseLanguage,
-    isOnBaseLanguage,
-    selectedEnvironment,
-    rawText,
-    loadingSystems,
-    loadingLanguages,
-    loadingNamespaces,
-    submittingKeys,
-    submittingTranslations,
-    canSubmitKeys,
-    canSubmitTranslations,
-    setSelectedNamespace,
-    setRawText,
-    handleSelectSystem,
-    handleSelectLanguage,
-    handleCreateKeys,
-    handleCreateTranslations,
-  } = useCadastroDeChaves();
+  const states = useCadastroDeChaves();
+  const { systems, languages, namespaces, selectedSystem, selectedLanguage, selectedNamespace, baseLanguage } = states;
+  const { isOnBaseLanguage, selectedEnvironment, rawText, loadingSystems, loadingLanguages } = states;
+  const { loadingNamespaces, submittingKeys, submittingTranslations, canSubmitKeys, canSubmitTranslations } = states;
+  const { setSelectedNamespace, setRawText, handleSelectSystem, handleSelectLanguage } = states;
+  const { handleCreateKeys, handleCreateTranslations } = states;
 
   return (
     <BsBox as='main' className={cadastroDeChavesStyles.pageTC}>

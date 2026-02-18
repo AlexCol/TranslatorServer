@@ -14,16 +14,11 @@ type SystemsSectionProps = {
   deleting: boolean;
 };
 
-export function SystemsSection({
-  systems,
-  selectedSystem,
-  onEnter,
-  onCreate,
-  onDelete,
-  loading,
-  creating,
-  deleting,
-}: SystemsSectionProps) {
+export function SystemsSection(props: SystemsSectionProps) {
+  const { systems, selectedSystem } = props;
+  const { onEnter, onCreate, onDelete } = props;
+  const { loading, creating, deleting } = props;
+
   const { newSystem, setNewSystem, canCreate, handleCreate } = useSystemsSection({ onCreate });
 
   return (
@@ -65,7 +60,9 @@ export function SystemsSection({
                 variants={{ variant: 'ghost' }}
                 onClick={() => void onEnter(system)}
                 className={
-                  selectedSystem === system ? systemsSectionStyles.itemButtonActiveTC : systemsSectionStyles.itemButtonTC
+                  selectedSystem === system
+                    ? systemsSectionStyles.itemButtonActiveTC
+                    : systemsSectionStyles.itemButtonTC
                 }
               >
                 <ArrowRightIcon size={12} /> {system}
@@ -89,4 +86,3 @@ export function SystemsSection({
     </BsBox>
   );
 }
-

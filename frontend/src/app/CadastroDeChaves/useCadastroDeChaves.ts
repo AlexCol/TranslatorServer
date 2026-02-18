@@ -1,97 +1,13 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { normalizeStringList } from './utils/normalizeStringList';
+import { parseKeyLines } from './utils/parseKeyLines';
+import { parseTranslationLines } from './utils/parseTranslationLines';
 import { envConfig } from '@/envConfig';
 import { getLanguage } from '@/services/generated/language/language';
 import { getNamespace } from '@/services/generated/namespace/namespace';
 import { getSystem } from '@/services/generated/system/system';
 import { getTranslations } from '@/services/generated/translations/translations';
-
-type ParsedTranslation = {
-  key: string;
-  value: string;
-};
-
-function normalizeStringList(response: unknown): string[] {
-  if (Array.isArray(response)) {
-    return response.filter((item): item is string => typeof item === 'string');
-  }
-
-  if (
-    typeof response === 'object' &&
-    response !== null &&
-    'data' in response &&
-    Array.isArray((response as { data?: unknown[] }).data)
-  ) {
-    return (response as { data: unknown[] }).data.filter((item): item is string => typeof item === 'string');
-  }
-
-  return [];
-}
-
-function sanitizeRawText(rawText: string): string {
-  const normalizedBreaks = rawText.replace(/\r\n?/g, '\n');
-  const withoutTabs = normalizedBreaks.replace(/\t+/g, ' ');
-
-  const lines = withoutTabs
-    .split('\n')
-    .map((line) => line.replace(/\s+$/g, '').trimStart())
-    .filter((line) => line.trim().length > 0);
-
-  return lines.join('\n');
-}
-
-function parseKeyLines(rawText: string): { keys: string[]; error?: string } {
-  const sanitized = sanitizeRawText(rawText);
-  const lines = sanitized.split('\n').filter(Boolean);
-
-  if (lines.length === 0) {
-    return { keys: [], error: 'Informe ao menos uma chave.' };
-  }
-
-  for (const line of lines) {
-    if (line.includes(';')) {
-      return { keys: [], error: 'Para cadastrar chaves, não use ";" nas linhas.' };
-    }
-  }
-
-  return { keys: lines };
-}
-
-function parseTranslationLines(rawText: string): { keys: ParsedTranslation[]; error?: string } {
-  const sanitized = sanitizeRawText(rawText);
-  const lines = sanitized.split('\n').filter(Boolean);
-
-  if (lines.length === 0) {
-    return { keys: [], error: 'Informe ao menos uma linha no formato chave;valor.' };
-  }
-
-  const parsed: ParsedTranslation[] = [];
-
-  for (const line of lines) {
-    const separatorCount = (line.match(/;/g) || []).length;
-    if (separatorCount !== 1) {
-      return {
-        keys: [],
-        error: `A linha "${line}" precisa conter exatamente um ";" (chave;valor).`,
-      };
-    }
-
-    const [rawKey, rawValue] = line.split(';');
-    const key = rawKey.trim();
-    const value = rawValue.trim();
-
-    if (!key || !value) {
-      return {
-        keys: [],
-        error: `A linha "${line}" precisa ter chave e valor preenchidos.`,
-      };
-    }
-
-    parsed.push({ key, value });
-  }
-
-  return { keys: parsed };
-}
 
 export default function useCadastroDeChaves() {
   const [systems, setSystems] = useState<string[]>([]);
@@ -114,7 +30,8 @@ export default function useCadastroDeChaves() {
   const isOnBaseLanguage = Boolean(selectedLanguage && baseLanguage && selectedLanguage === baseLanguage);
 
   const canSubmitKeys = useMemo(
-    () => Boolean(selectedSystem && selectedLanguage && selectedNamespace && isOnBaseLanguage && rawText.trim().length > 0),
+    () =>
+      Boolean(selectedSystem && selectedLanguage && selectedNamespace && isOnBaseLanguage && rawText.trim().length > 0),
     [selectedSystem, selectedLanguage, selectedNamespace, isOnBaseLanguage, rawText],
   );
 
@@ -135,21 +52,24 @@ export default function useCadastroDeChaves() {
     }
   }, []);
 
-  const loadLanguages = useCallback(async (system: string) => {
-    try {
-      setLoadingLanguages(true);
-      const [response, baseLanguageResponse] = await Promise.all([
-        getLanguage().languageControllerGetSystemInfo(system, selectedEnvironment),
-        getLanguage().languageControllerGetBaseLanguage(system, selectedEnvironment),
-      ]);
-      setLanguages(normalizeStringList(response).sort((a, b) => a.localeCompare(b)));
-      setBaseLanguage(baseLanguageResponse?.data || '');
-    } catch {
-      toast.error('Falha ao carregar idiomas.');
-    } finally {
-      setLoadingLanguages(false);
-    }
-  }, [selectedEnvironment]);
+  const loadLanguages = useCallback(
+    async (system: string) => {
+      try {
+        setLoadingLanguages(true);
+        const [response, baseLanguageResponse] = await Promise.all([
+          getLanguage().languageControllerGetSystemInfo(system, selectedEnvironment),
+          getLanguage().languageControllerGetBaseLanguage(system, selectedEnvironment),
+        ]);
+        setLanguages(normalizeStringList(response).sort((a, b) => a.localeCompare(b)));
+        setBaseLanguage(baseLanguageResponse?.data || '');
+      } catch {
+        toast.error('Falha ao carregar idiomas.');
+      } finally {
+        setLoadingLanguages(false);
+      }
+    },
+    [selectedEnvironment],
+  );
 
   const loadNamespaces = useCallback(
     async (system: string, language: string) => {
