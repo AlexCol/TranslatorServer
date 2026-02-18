@@ -1,4 +1,4 @@
-Ôªøimport { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { envConfig } from '@/envConfig';
@@ -33,7 +33,10 @@ export default function useTraducoes() {
   const [pageSize, setPageSize] = useState<PageSize>(5);
 
   const [rows, setRows] = useState<TranslationRow[]>([]);
-  const [editedValues, setEditedValues] = useState<Record<string, string>>({});
+  const editedValuesRef = useRef<Record<string, string>>({});
+  const dirtyKeysRef = useRef<Set<string>>(new Set());
+  const [changedCount, setChangedCount] = useState(0);
+  const [inputResetVersion, setInputResetVersion] = useState(0);
   const [baseLanguage, setBaseLanguage] = useState<string | null>(null);
 
   const [isCreateKeyModalOpen, setIsCreateKeyModalOpen] = useState(false);
@@ -68,7 +71,10 @@ export default function useTraducoes() {
 
         const mergedRows = mergeTranslations(withFallback as TranslationJson, withoutFallback as TranslationJson);
         setRows(mergedRows);
-        setEditedValues({});
+        editedValuesRef.current = {};
+        dirtyKeysRef.current.clear();
+        setChangedCount(0);
+        setInputResetVersion((current) => current + 1);
         setBaseLanguage(baseLanguageResponse?.data || null);
         setPage(1);
       } catch {
@@ -100,28 +106,25 @@ export default function useTraducoes() {
 
     const filtered = normalizedFilter
       ? rows.filter((row) => {
-          const currentLanguageValue = editedValues[row.key] ?? row.languageOriginalValue;
           return (
             row.key.toLowerCase().includes(normalizedFilter) ||
             row.fallbackValue.toLowerCase().includes(normalizedFilter) ||
-            currentLanguageValue.toLowerCase().includes(normalizedFilter)
+            row.languageOriginalValue.toLowerCase().includes(normalizedFilter)
           );
         })
       : rows;
 
     const sorted = [...filtered].sort((a, b) => {
-      const aLanguage = editedValues[a.key] ?? a.languageOriginalValue;
-      const bLanguage = editedValues[b.key] ?? b.languageOriginalValue;
-
-      const left = sortField === 'key' ? a.key : sortField === 'fallback' ? a.fallbackValue : aLanguage;
-      const right = sortField === 'key' ? b.key : sortField === 'fallback' ? b.fallbackValue : bLanguage;
+      const left = sortField === 'key' ? a.key : sortField === 'fallback' ? a.fallbackValue : a.languageOriginalValue;
+      const right =
+        sortField === 'key' ? b.key : sortField === 'fallback' ? b.fallbackValue : b.languageOriginalValue;
 
       const comparison = left.localeCompare(right, undefined, { sensitivity: 'base' });
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
     return sorted;
-  }, [rows, filter, sortField, sortDirection, editedValues]);
+  }, [rows, filter, sortField, sortDirection]);
 
   const totalPages = Math.max(1, Math.ceil(filteredSortedRows.length / pageSize));
 
@@ -135,15 +138,6 @@ export default function useTraducoes() {
       setPage(totalPages);
     }
   }, [page, totalPages]);
-
-  const changedEntries = useMemo(() => {
-    return Object.entries(editedValues)
-      .filter(([key, editedValue]) => {
-        const original = originalValuesByKey[key] ?? '';
-        return editedValue !== original;
-      })
-      .map(([key, value]) => ({ key, value }));
-  }, [editedValues, originalValuesByKey]);
 
   const rangeStart = filteredSortedRows.length === 0 ? 0 : (page - 1) * pageSize + 1;
   const rangeEnd = Math.min(page * pageSize, filteredSortedRows.length);
@@ -163,19 +157,38 @@ export default function useTraducoes() {
     setSortDirection('asc');
   };
 
-  const handleInputChange = (key: string, value: string) => {
-    setEditedValues((current) => ({
-      ...current,
-      [key]: value,
-    }));
+  const handleInputChange = (key: string, value: string, originalValue: string) => {
+    editedValuesRef.current[key] = value;
+
+    const isChanged = value !== originalValue;
+    const wasDirty = dirtyKeysRef.current.has(key);
+
+    if (isChanged && !wasDirty) {
+      dirtyKeysRef.current.add(key);
+      setChangedCount(dirtyKeysRef.current.size);
+    } else if (!isChanged && wasDirty) {
+      dirtyKeysRef.current.delete(key);
+      setChangedCount(dirtyKeysRef.current.size);
+    }
+
+    return isChanged;
   };
 
   const handleSaveChangedTranslations = async () => {
-    if (!system || !language || !namespace || changedEntries.length === 0) {
+    if (!system || !language || !namespace) {
       return;
     }
     if (!canMutateTranslations) {
-      toast.error('Salvar tradu√ß√£o permitido apenas no ambiente dev.');
+      toast.error('Salvar traduÁ„o permitido apenas no ambiente dev.');
+      return;
+    }
+
+    const changedEntries = Array.from(dirtyKeysRef.current).map((key) => ({
+      key,
+      value: editedValuesRef.current[key] ?? originalValuesByKey[key] ?? '',
+    }));
+
+    if (changedEntries.length === 0) {
       return;
     }
 
@@ -215,7 +228,7 @@ export default function useTraducoes() {
       return;
     }
     if (!canMutateTranslations) {
-      toast.error('Cria√ß√£o de chave permitida apenas no ambiente dev.');
+      toast.error('CriaÁ„o de chave permitida apenas no ambiente dev.');
       return;
     }
 
@@ -248,7 +261,7 @@ export default function useTraducoes() {
       return;
     }
     if (!canMutateTranslations) {
-      toast.error('Exclus√£o de chave permitida apenas no ambiente dev.');
+      toast.error('Exclus„o de chave permitida apenas no ambiente dev.');
       return;
     }
 
@@ -285,7 +298,8 @@ export default function useTraducoes() {
     page,
     pageSize,
     rows,
-    editedValues,
+    changedCount,
+    inputResetVersion,
     isCreateKeyModalOpen,
     newKey,
     isSubmitting,
@@ -296,7 +310,6 @@ export default function useTraducoes() {
     pageSizeOptions: PAGE_SIZE_OPTIONS,
     paginatedRows,
     filteredSortedRows,
-    changedEntries,
     rangeStart,
     rangeEnd,
     setFilter,
@@ -331,5 +344,3 @@ function stringifyTranslationValue(value: string | null | undefined): string {
 
   return String(value);
 }
-
-

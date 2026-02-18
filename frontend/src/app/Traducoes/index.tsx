@@ -1,4 +1,5 @@
-ï»¿import { CheckIcon, FileTextIcon, PlusIcon, RefreshCwIcon, SaveIcon, SearchIcon, Trash2Icon } from 'lucide-react';
+import { memo, useEffect, useState } from 'react';
+import { CheckIcon, FileTextIcon, PlusIcon, RefreshCwIcon, SaveIcon, SearchIcon, Trash2Icon } from 'lucide-react';
 import { InfoBadge, SortHeader, StatPill } from './components';
 import traducoesStyles from './traducoes.styles';
 import useTraducoes from './useTraducoes';
@@ -17,6 +18,40 @@ import {
 } from '@/components/singles/BaseComponents';
 import { Modal } from '@/components/singles/Modal/Modal';
 import { envConfig } from '@/envConfig';
+
+type EditableLanguageInputProps = {
+  rowKey: string;
+  originalValue: string;
+  disabled: boolean;
+  resetVersion: number;
+  onInputChange: (key: string, value: string, originalValue: string) => boolean;
+};
+
+const EditableLanguageInput = memo(function EditableLanguageInput({
+  rowKey,
+  originalValue,
+  disabled,
+  resetVersion,
+  onInputChange,
+}: EditableLanguageInputProps) {
+  const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    setIsChanged(false);
+  }, [resetVersion, rowKey, originalValue]);
+
+  return (
+    <BsBox className={traducoesStyles.inputWrapTC}>
+      <BsInput
+        defaultValue={originalValue}
+        onChange={(event) => setIsChanged(onInputChange(rowKey, event.target.value, originalValue))}
+        disabled={disabled}
+        className={isChanged ? traducoesStyles.inputChangedTC : traducoesStyles.inputDefaultTC}
+      />
+    </BsBox>
+  );
+});
+
 function Traducoes() {
   const {
     system,
@@ -31,7 +66,8 @@ function Traducoes() {
     page,
     pageSize,
     rows,
-    editedValues,
+    changedCount,
+    inputResetVersion,
     isCreateKeyModalOpen,
     newKey,
     isSubmitting,
@@ -42,7 +78,6 @@ function Traducoes() {
     pageSizeOptions,
     paginatedRows,
     filteredSortedRows,
-    changedEntries,
     rangeStart,
     rangeEnd,
     setFilter,
@@ -110,16 +145,16 @@ function Traducoes() {
             <BsButton
               type='button'
               onClick={() => void handleSaveChangedTranslations()}
-              buttonProps={{ disabled: changedEntries.length === 0 || isSubmitting || !canMutateTranslations }}
+              buttonProps={{ disabled: changedCount === 0 || isSubmitting || !canMutateTranslations }}
               className={traducoesStyles.actionButtonTC}
             >
-              <SaveIcon size={14} /> Salvar ({changedEntries.length})
+              <SaveIcon size={14} /> Salvar ({changedCount})
             </BsButton>
           </BsBox>
         </BsBox>
         {!canMutateTranslations && (
           <BsText variants={{ variant: 'small' }} className={traducoesStyles.mutationHintTC}>
-            EdiÃ§Ã£o e criaÃ§Ã£o de chave disponÃ­veis apenas no ambiente {envConfig.devEnvironment}.
+            Edição e criação de chave disponíveis apenas no ambiente {envConfig.devEnvironment}.
           </BsText>
         )}
       </BsBox>
@@ -145,7 +180,7 @@ function Traducoes() {
           <BsBox className={traducoesStyles.statsRowTC}>
             <StatPill label='Total' value={rows.length} />
             <StatPill label='Filtrado' value={filteredSortedRows.length} />
-            <StatPill label='Alterados' value={changedEntries.length} highlight />
+            <StatPill label='Alterados' value={changedCount} highlight />
           </BsBox>
         </BsBox>
       </BsBox>
@@ -186,9 +221,6 @@ function Traducoes() {
 
           <BsTableBody>
             {paginatedRows.map((row) => {
-              const currentValue = editedValues[row.key] ?? row.languageOriginalValue;
-              const isChanged = currentValue !== row.languageOriginalValue;
-
               return (
                 <BsTableRow key={row.key} className={traducoesStyles.bodyRowTC}>
                   <BsTableCell className={traducoesStyles.cellTC}>
@@ -217,14 +249,13 @@ function Traducoes() {
                   </BsTableCell>
 
                   <BsTableCell className={traducoesStyles.cellTC}>
-                    <BsBox className={traducoesStyles.inputWrapTC}>
-                      <BsInput
-                        value={currentValue}
-                        onChange={(event) => handleInputChange(row.key, event.target.value)}
-                        disabled={!canMutateTranslations || isSubmitting}
-                        className={isChanged ? traducoesStyles.inputChangedTC : traducoesStyles.inputDefaultTC}
-                      />
-                    </BsBox>
+                    <EditableLanguageInput
+                      rowKey={row.key}
+                      originalValue={row.languageOriginalValue}
+                      resetVersion={inputResetVersion}
+                      disabled={!canMutateTranslations || isSubmitting}
+                      onInputChange={handleInputChange}
+                    />
                   </BsTableCell>
                 </BsTableRow>
               );
@@ -344,6 +375,3 @@ function Traducoes() {
 }
 
 export default Traducoes;
-
-
-
