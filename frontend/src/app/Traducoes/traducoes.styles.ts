@@ -38,7 +38,7 @@
   cellTC: `px-3 py-2.5 align-top`,
   keyRowTC: `flex items-start gap-2`,
   keyTextTC: `font-mono text-[12px] leading-5 break-all text-foreground`,
-  deleteKeyButtonTC: `h-7 px-2 text-destructive border-destructive/30`,
+  deleteKeyButtonTC: `h-7 px-2 border-destructive/30`,
   fallbackTextTC: `text-[12px] leading-5 whitespace-pre-wrap wrap-break-word text-muted-foreground`,
   inputWrapTC: `space-y-1`,
   inputDefaultTC: `bg-background`,

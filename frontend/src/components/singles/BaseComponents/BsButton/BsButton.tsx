@@ -4,7 +4,12 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 function BsButton(props: BsButtonProps) {
-  const { buttonProps, variants, asChild, children, className, type, onClick } = props;
+  const { buttonProps, variants, asChild, children, className, type } = props;
+
+  let onClick: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined;
+  if (type === 'button') {
+    onClick = props.onClick;
+  }
   const variant = variants?.variant ?? 'default';
 
   return (

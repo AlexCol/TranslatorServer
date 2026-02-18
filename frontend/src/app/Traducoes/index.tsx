@@ -193,11 +193,10 @@ function Traducoes() {
                 <BsTableRow key={row.key} className={traducoesStyles.bodyRowTC}>
                   <BsTableCell className={traducoesStyles.cellTC}>
                     <BsBox className={traducoesStyles.keyRowTC}>
-                      <BsText className={traducoesStyles.keyTextTC}>{row.key}</BsText>
                       {isOnBaseLanguage && canMutateTranslations && (
                         <BsButton
                           type='button'
-                          variants={{ variant: 'outline' }}
+                          variants={{ variant: 'destructive' }}
                           onClick={() => {
                             if (window.confirm(`Excluir chave "${row.key}"?`)) {
                               void handleDeleteKey(row.key);
@@ -206,9 +205,10 @@ function Traducoes() {
                           buttonProps={{ disabled: !canMutateTranslations || isSubmitting }}
                           className={traducoesStyles.deleteKeyButtonTC}
                         >
-                          <Trash2Icon size={12} />
+                          <Trash2Icon />
                         </BsButton>
                       )}
+                      <BsText className={traducoesStyles.keyTextTC}>{row.key}</BsText>
                     </BsBox>
                   </BsTableCell>
 

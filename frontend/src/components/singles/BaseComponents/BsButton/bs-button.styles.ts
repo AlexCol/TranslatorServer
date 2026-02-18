@@ -9,7 +9,7 @@ const invertedByVariant: Record<ButtonVariant, string> = {
     hover:text-primary
   `,
   destructive: `
-    hover:bg-background
+    hover:bg-white
     hover:text-destructive
   `,
   outline: `
