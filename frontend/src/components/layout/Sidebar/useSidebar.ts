@@ -52,6 +52,14 @@ export default function useSidebar() {
         children: [
           { id: '1-1', label: 'Dashboard', ordem: 1, children: [], href: '/', icon: 'LayoutDashboard' },
           { id: '1-2', label: 'Cadastro', ordem: 2, children: [], href: '/cadastro', icon: 'Pen' },
+          {
+            id: '1-3',
+            label: 'Cadastro De Chaves',
+            ordem: 3,
+            children: [],
+            href: '/cadastro/chaves',
+            icon: 'BookOpenText',
+          },
         ],
         href: '',
         icon: 'BookType',
