@@ -307,7 +307,9 @@ function Traducoes() {
             <BsText as='h3' variants={{ weight: 'semibold' }}>
               Criar nova chave
             </BsText>
-            <BsText variants={{ variant: 'small' }}>A nova chave sera criada no sistema/namespace atual.</BsText>
+            <BsText variants={{ variant: 'small' }}>
+              A nova chave sera criada no sistema/namespace atual. No idioma Base.
+            </BsText>
           </BsBox>
 
           <BsInput
