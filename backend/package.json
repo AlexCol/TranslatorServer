@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "dev": "nest start --watch",
+    "dev": "npm run migrate:all && nest start --watch",
     "debug": "nest start --debug --watch",
     "prod": "node dist/main",
     "lint": "eslint --fix src --ext .ts",
